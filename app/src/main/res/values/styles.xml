@@ -1,0 +1,7 @@
+<resources>
+    <dimen name="padding_top">56dp</dimen>
+    <style name="MyButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/blue</item>
+        <item name="colorButtonNormal">@color/black</item>
+    </style>
+</resources>

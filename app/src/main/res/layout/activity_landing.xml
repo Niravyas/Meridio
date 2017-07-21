@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.google.android.gms.samples.vision.barcodereader.LandingActivity"
+    android:orientation="vertical"
+    android:paddingTop="56dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="56dp"
+    >
+    <Button
+        android:id="@+id/post_book"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.25"
+        android:text="@string/post_book"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="24dp"
+        android:background="?attr/selectableItemBackground"
+        android:theme="@style/MyButton"
+        android:textSize="40sp"
+        android:textColor="@color/white"/>
+    <Button
+        android:id="@+id/find_book"
+        android:layout_marginTop="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.38"
+        android:text="@string/find_book"
+        android:layout_gravity="center_vertical"
+        android:background="?attr/selectableItemBackground"
+        android:theme="@style/MyButton"
+        android:textSize="40sp"
+        android:textColor="@color/white"/>
+
+</LinearLayout>
