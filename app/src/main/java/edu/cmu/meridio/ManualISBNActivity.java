@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class ManualISBNActivity extends AppCompatActivity {
+public class ManualISBNActivity extends BaseActivity {
     public static final String manualUseInput = "Manual Input";
 
     @Override

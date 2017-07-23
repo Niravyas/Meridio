@@ -49,7 +49,7 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
-public class ISBNActivity extends AppCompatActivity implements LocationListener{
+public class ISBNActivity extends BaseActivity implements LocationListener{
 
     private ConnectivityManager mConnectivityManager = null;
     ProgressDialog mProgress;
@@ -133,8 +133,6 @@ public class ISBNActivity extends AppCompatActivity implements LocationListener{
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
-                //call post api and show result in alertdialog
                 String request = buildPostBookRequestBody();
                 new PostBook(request).execute();
             }
@@ -570,7 +568,9 @@ public class ISBNActivity extends AppCompatActivity implements LocationListener{
             alertDialog.setIcon(R.drawable.success);
             alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    finish();
+                    //redirect to library
+                    Intent i = new Intent(getApplicationContext(), LibraryActivity.class);
+                    startActivity(i);
                 }
             });
 

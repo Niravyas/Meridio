@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-public class LandingActivity extends AppCompatActivity {
+public class LandingActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

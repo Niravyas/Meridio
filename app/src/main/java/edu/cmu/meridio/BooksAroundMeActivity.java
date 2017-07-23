@@ -8,7 +8,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class BooksAroundMeActivity extends AppCompatActivity {
+public class BooksAroundMeActivity extends BaseActivity {
 
     private ListView listView;
     private ArrayList<String> stringArrayList;
@@ -18,8 +18,6 @@ public class BooksAroundMeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_books_around_me);
-
-        Intent data = getIntent();
 
         listView = (ListView) findViewById(R.id.list_book);
         setData();
