@@ -24,5 +24,7 @@
     <string name="manual_isbn">Book ISBN</string>
     <string name="get_details">Get Details</string>
     <string name="cancel">Cancel</string>
+    <string name="post_success">Congratulations!\nYour book was successfully posted!</string>
+    <string name="post_fail">Oops! Something went wrong and the book could not be posted! Retry in some time!</string>
 
 </resources>

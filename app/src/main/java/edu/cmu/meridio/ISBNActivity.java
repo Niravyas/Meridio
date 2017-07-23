@@ -11,6 +11,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -37,6 +40,8 @@ public class ISBNActivity extends AppCompatActivity {
     TextView title;
     TextView genre;
     TextView description;
+    Button post;
+    Button cancel;
     private String isbnForImage;
     private static final String coverLibraryURL = "http://covers.openlibrary.org/b/isbn/";
     private static final String suffixLarge = "-L.jpg?default=false";
@@ -44,6 +49,7 @@ public class ISBNActivity extends AppCompatActivity {
     private ImageView imageView;
     private boolean getFromCoversLibrary = false;
     private String imageURLString;
+    private String postBookRequest;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,10 +73,24 @@ public class ISBNActivity extends AppCompatActivity {
         genre = (TextView) findViewById(R.id.genre);
         description = (TextView) findViewById(R.id.description);
         imageURLString = coverLibraryURL + isbnForImage + suffixLarge;
+        post = (Button)findViewById(R.id.btn_post_book);
+        cancel = (Button)findViewById(R.id.btn_cancel_post_book);
         new GoogleApiRequest(isbnForImage).execute();
 //        setfoc
 //        new GoogleApiRequest("1234567890").execute();
-
+        post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+                //call post api and show result in alertdialog
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     // Received ISBN from Barcode Scanner. Send to GoogleBooks to obtain book information.
@@ -336,4 +356,168 @@ public class ISBNActivity extends AppCompatActivity {
         String thumbnailURL = imageLinksJSON.getString("thumbnail");
         Picasso.with(getApplicationContext()).load(thumbnailURL).into(imageView);
     }
+
+    private class PostBook extends AsyncTask<Void, Void, JSONObject>{
+        String body;
+        PostBook(String body){
+            this.body = body;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // Check network connection.
+            if(isNetworkConnected() == false){
+                // Cancel request.
+                Log.v(getClass().getName(), "Not connected to the internet");
+                cancel(true);
+                return;
+            }
+            mProgress = new ProgressDialog(ISBNActivity.this);
+            mProgress.setMessage("Uploading your book...");
+            mProgress.show();
+        }
+
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            Log.v("posting: point1", "true");
+            // Stop if cancelled
+            if (isCancelled()) {
+                Log.v("cancelled", "in doInBackground");
+                return null;
+            }
+
+            String apiUrlString = "http://ec2-54-85-207-189.compute-1.amazonaws.com:4000/postBook";
+            try {
+                HttpURLConnection connection = null;
+                // Build Connection.
+                try {
+                    URL url = new URL(apiUrlString);
+                    Log.v("URL called", apiUrlString);
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setReadTimeout(10000); // 10 seconds
+                    connection.setConnectTimeout(10000); // 10 seconds
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.setRequestProperty("Accept", "application/json");
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+
+                    byte[] outputInBytes = this.body.getBytes("UTF-8");
+                    OutputStream os = connection.getOutputStream();
+                    os.write(outputInBytes);
+                    os.close();
+
+                } catch (MalformedURLException e) {
+                    // Impossible: The only two URLs used in the app are taken from string resources.
+                    e.printStackTrace();
+                } catch (ProtocolException e) {
+                    // Impossible: "GET" is a perfectly valid request method.
+                    e.printStackTrace();
+                }
+                int responseCode = connection.getResponseCode();
+                Log.v("post:point3", "true");
+                if (responseCode != 200) {
+                    Log.v(getClass().getName(), "posting API request failed. Response Code: " + responseCode);
+                    connection.disconnect();
+                    showPostFailDialog(getString(R.string.post_fail));
+                    return null;
+                }
+
+                // Read data from response.
+                StringBuilder builder = new StringBuilder();
+                BufferedReader responseReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line = responseReader.readLine();
+                while (line != null) {
+                    builder.append(line);
+                    line = responseReader.readLine();
+                }
+                String responseString = builder.toString();
+                Log.v(getClass().getName(), "Response String: " + responseString);
+                JSONObject responseJson = new JSONObject(responseString);
+                // Close connection and return response code.
+                connection.disconnect();
+
+//                isCoverInCoversLibrary();
+
+                return responseJson;
+            } catch (SocketTimeoutException e) {
+                Log.v(getClass().getName(), "Connection timed out. Returning null");
+                return null;
+            } catch (IOException e) {
+                Log.v(getClass().getName(), "IOException when connecting to bookpost API.");
+                e.printStackTrace();
+                return null;
+            } catch (JSONException e) {
+                Log.v(getClass().getName(), "JSONException when connecting to bookpost API.");
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject responseJson) {
+            if(isCancelled()){
+                // Request was cancelled due to no network connection.
+                showNetworkDialog();
+            } else if(responseJson == null){
+                showSimpleDialog(getResources().getString(R.string.dialog_null_response));
+            }
+            else{
+                mProgress.hide();
+                if(responseJson.has("status") ) {
+                    try {
+                        String result = responseJson.getString("status");
+                        if (result.equals("success")){
+                            showPostSuccessDialog(getString(R.string.post_book));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.v("book post success", "in post execute");
+                }
+            }
+        }
+    }
+
+
+    private void showPostSuccessDialog(String showString) {
+        try {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+            alertDialog.setTitle("Info");
+            alertDialog.setMessage(showString);
+            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+
+            alertDialog.show();
+        }catch(Exception e) {
+            Log.v("Book post", "Show Dialog: "+e.getMessage());
+        }
+    }
+
+    private void showPostFailDialog(String showString) {
+        try {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+            alertDialog.setTitle("Error");
+            alertDialog.setMessage(showString);
+            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.show();
+        }catch(Exception e) {
+            Log.v("Book post failed", "Show Dialog: "+e.getMessage());
+        }
+    }
+
+    private void buildPostBookRequestBody(){
+        User user = User.getInstance();
+        String body = "{"
+                + "\"userId\":" + user.getUserID().toString()
+
+                + "}";
+    }
+
 }
