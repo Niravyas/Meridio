@@ -5,8 +5,8 @@ package edu.cmu.meridio;
  */
 
 public class User {
-    static User user;
-    static String userID;
+    private static User user;
+    private static String userID;
     private User(){};
     public static User getInstance(){
         if (user == null){

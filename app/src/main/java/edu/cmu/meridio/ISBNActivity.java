@@ -1,21 +1,37 @@
 package edu.cmu.meridio;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.squareup.picasso.Picasso;
 
@@ -33,7 +49,7 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
-public class ISBNActivity extends AppCompatActivity {
+public class ISBNActivity extends AppCompatActivity implements LocationListener{
 
     private ConnectivityManager mConnectivityManager = null;
     ProgressDialog mProgress;
@@ -50,6 +66,13 @@ public class ISBNActivity extends AppCompatActivity {
     private boolean getFromCoversLibrary = false;
     private String imageURLString;
     private String postBookRequest;
+    private final static int RC_HANDLE_LOC_PERM = 2;
+    private Location lastKnownLocation;
+    private LocationManager mLocationManager;
+    private static final int LOCATION_INTERVAL = 0;
+    private static final float LOCATION_DISTANCE = 0f;
+    private Location mLastLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +82,7 @@ public class ISBNActivity extends AppCompatActivity {
         //If barcode detected from camera, get isbn from it
         // else
         // get from user manual entry
-        if(data.hasExtra(BarcodeCaptureActivity.BarcodeObject)){
+        if (data.hasExtra(BarcodeCaptureActivity.BarcodeObject)) {
             Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
             isbnForImage = barcode.displayValue;
         } else {
@@ -67,22 +90,53 @@ public class ISBNActivity extends AppCompatActivity {
             isbnForImage = data.getStringExtra(ManualISBNActivity.manualUseInput);
         }
 
-        imageView = (ImageView)findViewById(R.id.image);
+        imageView = (ImageView) findViewById(R.id.image);
 
         title = (TextView) findViewById(R.id.title);
         genre = (TextView) findViewById(R.id.genre);
         description = (TextView) findViewById(R.id.description);
         imageURLString = coverLibraryURL + isbnForImage + suffixLarge;
-        post = (Button)findViewById(R.id.btn_post_book);
-        cancel = (Button)findViewById(R.id.btn_cancel_post_book);
+        post = (Button) findViewById(R.id.btn_post_book);
+        cancel = (Button) findViewById(R.id.btn_cancel_post_book);
         new GoogleApiRequest(isbnForImage).execute();
-//        setfoc
-//        new GoogleApiRequest("1234567890").execute();
+
+        String gpsProvider = LocationManager.GPS_PROVIDER;
+        LocationManager locationManager =
+                (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+            return;
+        }
+        lastKnownLocation = locationManager.getLastKnownLocation(gpsProvider);
+        if(lastKnownLocation == null){
+            Log.v("battery draining", "code in action");
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+            mLastLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            try {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        LOCATION_INTERVAL, LOCATION_DISTANCE, ISBNActivity.this);
+            } catch (java.lang.SecurityException ex) {
+                Log.v("requestLocation", "fail to request location update, ignore", ex);
+            } catch (IllegalArgumentException ex) {
+                Log.v("requestLocation", "gps provider does not exist " + ex.getMessage());
+            } catch (Exception e){
+                Log.v("other exception caught", e.getMessage());
+            }
+        }
+
+        if(lastKnownLocation == null){
+            Log.v("lastknownlocation", "is still null");
+        } else
+            Log.v("lsatknownLocation", lastKnownLocation.toString());
+
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO
                 //call post api and show result in alertdialog
+                String request = buildPostBookRequestBody();
+                new PostBook(request).execute();
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +145,30 @@ public class ISBNActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        lastKnownLocation.set(location);
+        Log.v("onlocationChanged", "true");
+        Log.v("new location", location.toString());
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Log.v("onStatusChanged", "true");
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Log.v("onProviderEnabled", "true");
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Toast.makeText(ISBNActivity.this, "Please enable location service", Toast.LENGTH_SHORT).show();
     }
 
     // Received ISBN from Barcode Scanner. Send to GoogleBooks to obtain book information.
@@ -468,7 +546,7 @@ public class ISBNActivity extends AppCompatActivity {
                     try {
                         String result = responseJson.getString("status");
                         if (result.equals("success")){
-                            showPostSuccessDialog(getString(R.string.post_book));
+                            showPostSuccessDialog(getString(R.string.post_success));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -476,6 +554,9 @@ public class ISBNActivity extends AppCompatActivity {
                     Log.v("book post success", "in post execute");
                 }
             }
+            //Stop requesting location updates
+            if(mLocationManager != null)
+                mLocationManager.removeUpdates(ISBNActivity.this);
         }
     }
 
@@ -486,7 +567,7 @@ public class ISBNActivity extends AppCompatActivity {
 
             alertDialog.setTitle("Info");
             alertDialog.setMessage(showString);
-            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.setIcon(R.drawable.success);
             alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     finish();
@@ -512,12 +593,43 @@ public class ISBNActivity extends AppCompatActivity {
         }
     }
 
-    private void buildPostBookRequestBody(){
+    private String buildPostBookRequestBody(){
         User user = User.getInstance();
         String body = "{"
-                + "\"userId\":" + user.getUserID().toString()
-
+                + "\"userId\":" + "123"//user.getUserID()
+                + ",\"isbn\": \"" + isbnForImage + "\""
+                + ",\"latitude\": \"" + Double.toString(lastKnownLocation.getLatitude()) + "\""
+                + ",\"longitude\": \"" + Double.toString(lastKnownLocation.getLongitude()) + "\""
+                +",\"imageUrl\": \"" + imageURLString + "\""
+                +",\"title\": \"" + title.getText().toString() + "\""
+                +",\"genre\": \"" + genre.getText().toString() + "\""
+                +",\"description\": \"" + description.getText().toString() + "\""
+                +",\"author\": \"" + "\""
                 + "}";
+        Log.v("request body", body);
+        return body;
+    }
+
+    private void requestLocationPermission(){
+        Log.w("LocationPermission", "Location permission is not granted. Requesting permission");
+
+        final String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
+
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            ActivityCompat.requestPermissions(this, permissions, RC_HANDLE_LOC_PERM);;
+            return;
+        }
+
+        final Activity thisActivity = this;
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityCompat.requestPermissions(thisActivity, permissions,
+                        RC_HANDLE_LOC_PERM);
+            }
+        };
     }
 
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.google.android.gms.samples.vision.barcodereader.LandingActivity"
+    tools:context="edu.cmu.meridio.LandingActivity"
     android:orientation="vertical"
     android:paddingTop="56dp"
     android:paddingLeft="24dp"
