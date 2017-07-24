@@ -277,6 +277,9 @@ public class LibraryActivity extends BaseActivity {
         return body;
     }
 
+    /* use this to tap on book item anywhere and delete
+       for now, we're using tapping on trash icon to delete
+     */
     private class deleteBook extends AsyncTask<Void, Void, JSONObject>{
 
         String body;

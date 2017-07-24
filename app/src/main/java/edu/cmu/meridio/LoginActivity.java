@@ -33,7 +33,7 @@ import static com.facebook.Profile.fetchProfileForCurrentAccessToken;
 import static com.facebook.Profile.getCurrentProfile;
 
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends AppCompatActivity {
     LoginButton loginButton;
     TextView textView;
     User fbUser;

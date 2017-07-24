@@ -20,9 +20,13 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i ;
         switch (item.getItemId()) {
             case R.id.action_library:
-                Intent i = new Intent(getApplicationContext(), LibraryActivity.class);
+                i = new Intent(getApplicationContext(), LibraryActivity.class);
+                startActivity(i);
+            case R.id.action_req_from_me:
+                i = new Intent(getApplicationContext(), MyRequestsActivity.class);
                 startActivity(i);
             default:
                 return super.onOptionsItemSelected(item);

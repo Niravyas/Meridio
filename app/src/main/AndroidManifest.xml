@@ -13,12 +13,14 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
+
      
 
 
     <uses-feature
         android:name="android.hardware.camera.front"
         android:required="false" />
+
 
      
 
@@ -27,17 +29,20 @@
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
 
+
      
 
+
     <application
-        android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
-        <activity android:name=".LoginActivity"
+        <activity
+            android:name=".LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -59,7 +64,7 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true"
@@ -73,26 +78,30 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".PostActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".PostActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".BarcodeCaptureActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ISBNActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".LandingActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
-        <activity android:name=".ManualISBNActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".BooksAroundMeActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".LibraryActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".LandingActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ManualISBNActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".BooksAroundMeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LibraryActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".MyRequestsActivity"
             android:screenOrientation="portrait">
 
         </activity>

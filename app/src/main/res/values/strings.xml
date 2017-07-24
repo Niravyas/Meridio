@@ -29,5 +29,9 @@
     <string name="library_null_response">We\'re unable to fetch any books from your library :(</string>
     <string name="delete_book_null_response">Could not delete. Please try again.</string>
     <string name="delete_success">Your book was successfully deleted.</string>
+    <string name="request_null_response">Could not fetch requests. Please try again.</string>
+    <string name="status_pending">pending</string>
+    <string name="status_approved">approved</string>
+    <string name="status_declined">declined</string>
 
 </resources>

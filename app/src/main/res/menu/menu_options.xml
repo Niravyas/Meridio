@@ -8,4 +8,9 @@
         android:orderInCategory="100"
         android:title="Library"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_req_from_me"
+        android:orderInCategory="100"
+        android:title="Requests Sent"
+        app:showAsAction="never" />
 </menu>
