@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -43,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     JsonReader jsonReader;
     String name;
     String email;
+    String sessionToken;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
                         fbUser = User.getInstance();
                         // App code
                         Log.i("UserToken", loginResult.getAccessToken().getToken());
-                        Log.i("UserToken", loginResult.getAccessToken().getUserId());
+                        Log.i("userID", loginResult.getAccessToken().getUserId());
 
                        /* Profile.fetchProfileForCurrentAccessToken();
 
@@ -83,12 +85,20 @@ public class LoginActivity extends AppCompatActivity {
                                         // Application code
                                         try {
 
+<<<<<<< HEAD
                                             LoginActivity.this.name = object.getString("name");
                                             LoginActivity.this.email = object.getString("email");
                                             Log.i("LoginActivityName", LoginActivity.this.name);
                                             Log.i("LoginActivityEmail", LoginActivity.this.email);
 
                                             setUser(loginResult);
+=======
+                                            name = object.getString("name");
+                                            email = object.getString("email");
+                                            sessionToken = fbLoginResult.getAccessToken().getToken();
+                                            Log.i("Name", name);
+                                            Log.i("Email", email);
+>>>>>>> 1e08fc81a103fef5d0ace4f33f1d46bdb623a420
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -102,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                         request.executeAsync();
                         Log.v("calling setUser now", "true");
                       //  textView.setText("Happy happy "+loginResult.getAccessToken().getUserId() + "\n" + loginResult.getAccessToken().getToken());
-                        fbUser.setUserID(loginResult.getAccessToken().getUserId());
+//                        fbUser.setUserID(loginResult.getAccessToken().getUserId());
                         Log.v("FB returned User ID", "should be set to:" + loginResult.getAccessToken().getUserId());
                         Intent myIntent = new Intent(LoginActivity.this, LandingActivity.class);
                         //myIntent.putExtra("key", value); //Optional parameters
@@ -125,15 +135,24 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
     private void setUser(LoginResult loginResult){
+
         if(name == null)
             Log.v("name", "set to null");
         else
             Log.v("name ", "should be set");
+
+        Log.v("testing name", this.name);
+        Log.v("testing email", this.email);
+        Log.v("testing sessionToken", this.sessionToken);
+
         fbLoginResult = loginResult;
-        new sendUserInfo().execute();
+        String requestBody = buildSetUserSessionRequestBody();
+        new sendUserInfo(requestBody).execute();
     }
 
     private class sendUserInfo extends AsyncTask<String, String, JSONObject> {
+        String body;
+        sendUserInfo(String body) {this.body = body;}
 
         @Override
         protected JSONObject doInBackground(String... strings) {
@@ -152,19 +171,9 @@ public class LoginActivity extends AppCompatActivity {
                 myConnection.setDoOutput(true);
                 myConnection.setDoInput(true);
 
-                JSONObject jsonParam = new JSONObject();
-                jsonParam.put("name", LoginActivity.this.name);//B92E1BCC-BE26-45AB-ACA2-27F9AF627306
-                Log.v("setName in json", LoginActivity.this.name.toString());
-                Log.v("setEmail in json", LoginActivity.this.email.toString());
-                Log.v("setsessionToken in json", LoginActivity.this.fbLoginResult.getAccessToken().getToken());
-                jsonParam.put("sessionToken", LoginActivity.this.fbLoginResult.getAccessToken().getToken().toString());
-                jsonParam.put("emailId", LoginActivity.this.email);
-
-                DataOutputStream os = new DataOutputStream(myConnection.getOutputStream());
-
-                os.writeBytes(jsonParam.toString());
-
-                os.flush();
+                byte[] outputInBytes = this.body.getBytes("UTF-8");
+                OutputStream os = myConnection.getOutputStream();
+                os.write(outputInBytes);
                 os.close();
 
                 if (myConnection.getResponseCode() == 200) {
@@ -260,5 +269,15 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callBackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private String buildSetUserSessionRequestBody(){
+        String body = "{"
+                + "\"name\": \"" + this.name + "\""
+                + ",\"emailId\": \"" + this.email + "\""
+                + ",\"sessionToken\": \"" + this.sessionToken + "\""
+                + "}";
+        Log.v("setuserreq body", body);
+        return body;
     }
 }
