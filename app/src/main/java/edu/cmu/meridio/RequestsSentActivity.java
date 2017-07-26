@@ -52,7 +52,7 @@ public class RequestsSentActivity extends BaseActivity {
     private String buildMyRequestsRequestBody(){
         User user = User.getInstance();
         String body = "{"
-                + "\"fromUserId\":" + "123"//user.getUserID()
+                + "\"fromUserId\":" + user.getUserID()
                 + "}";
         Log.v("request body", body);
         return body;
@@ -266,7 +266,7 @@ public class RequestsSentActivity extends BaseActivity {
                 String status = (request.has("status"))?request.get("status").toString():null;
                 String acceptorWantsBook = (request.has("acceptorWantsBook"))?request.get("acceptorWantsBook").toString():null;
                 String requestorWantsBook = (request.has("requestorWantsBook"))?request.get("requestorWantsBook").toString():null;
-                Request r = new Request(reqId, fromUserId, toUserId, status, acceptorWantsBook, requestorWantsBook);
+                Request r = new Request(reqId, fromUserId, toUserId, status, acceptorWantsBook, requestorWantsBook, "");
                 requestArrayList.add(r);
             }
         } catch (JSONException e) {

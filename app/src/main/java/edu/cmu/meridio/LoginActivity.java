@@ -84,21 +84,13 @@ public class LoginActivity extends AppCompatActivity {
 
                                         // Application code
                                         try {
-
-<<<<<<< HEAD
                                             LoginActivity.this.name = object.getString("name");
                                             LoginActivity.this.email = object.getString("email");
                                             Log.i("LoginActivityName", LoginActivity.this.name);
                                             Log.i("LoginActivityEmail", LoginActivity.this.email);
 
                                             setUser(loginResult);
-=======
-                                            name = object.getString("name");
-                                            email = object.getString("email");
-                                            sessionToken = fbLoginResult.getAccessToken().getToken();
-                                            Log.i("Name", name);
-                                            Log.i("Email", email);
->>>>>>> 1e08fc81a103fef5d0ace4f33f1d46bdb623a420
+
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -141,9 +133,6 @@ public class LoginActivity extends AppCompatActivity {
         else
             Log.v("name ", "should be set");
 
-        Log.v("testing name", this.name);
-        Log.v("testing email", this.email);
-        Log.v("testing sessionToken", this.sessionToken);
 
         fbLoginResult = loginResult;
         String requestBody = buildSetUserSessionRequestBody();
@@ -275,7 +264,7 @@ public class LoginActivity extends AppCompatActivity {
         String body = "{"
                 + "\"name\": \"" + this.name + "\""
                 + ",\"emailId\": \"" + this.email + "\""
-                + ",\"sessionToken\": \"" + this.sessionToken + "\""
+                + ",\"sessionToken\": \"" + this.fbLoginResult.getAccessToken().getToken() + "\""
                 + "}";
         Log.v("setuserreq body", body);
         return body;

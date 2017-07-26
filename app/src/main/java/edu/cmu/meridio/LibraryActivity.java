@@ -271,7 +271,7 @@ public class LibraryActivity extends BaseActivity {
     private String buildLibraryRequestBody(){
         User user = User.getInstance();
         String body = "{"
-                + "\"userId\":" + "123"//user.getUserID()
+                + "\"userId\":" + user.getUserID()
                 + "}";
         Log.v("request body", body);
         return body;

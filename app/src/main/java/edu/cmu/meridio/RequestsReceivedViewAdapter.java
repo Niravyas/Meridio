@@ -60,10 +60,9 @@ public class RequestsReceivedViewAdapter extends ArrayAdapter {
             holder = (RequestsReceivedViewAdapter.ViewHolder) convertView.getTag();
         }
 
-        holder.bookTitle.setText(Integer.toString(getItem(position).getFromUserID()));
-//        holder.bookTitle.setText(getItem(position).getRequestorWantsBook());
+        holder.requestorEmail.setText(getItem(position).getFromUserEmail());
         //get first letter of each String item
-        String firstLetter = String.valueOf(Integer.toString(getItem(position).getFromUserID()).charAt(0));
+        String firstLetter = String.valueOf(getItem(position).getFromUserEmail().charAt(0));
 
         ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
         // generate random color
@@ -79,11 +78,11 @@ public class RequestsReceivedViewAdapter extends ArrayAdapter {
 
     private class ViewHolder {
         private ImageView imageView;
-        private TextView bookTitle;
+        private TextView requestorEmail;
 
         public ViewHolder(View v) {
             imageView = (ImageView) v.findViewById(R.id.book_image);
-            bookTitle = (TextView) v.findViewById(R.id.book_title);
+            requestorEmail = (TextView) v.findViewById(R.id.book_title);
         }
     }
 }

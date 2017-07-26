@@ -9,12 +9,19 @@ public class Request {
     private String acceptorWantsBook;
     private int id;
     private int fromUserID;
+    private String fromUserEmail;
     private int toUserID;
     private String status;
 
-    public Request(int id, int fromUserID, int toUserID, String status, String acceptorWantsBook, String requestorWantsBook){
+    public Request(int id, int fromUserID,
+                   int toUserID,
+                   String status,
+                   String acceptorWantsBook,
+                   String requestorWantsBook,
+                   String fromUserEmail){
         this.acceptorWantsBook = acceptorWantsBook;
         this.requestorWantsBook = requestorWantsBook;
+        this.fromUserEmail = fromUserEmail;
         this.id = id;
         this.status = status;
         this.toUserID = toUserID;
@@ -69,5 +76,13 @@ public class Request {
 
     public void setFromUserID(int fromUserID) {
         this.fromUserID = fromUserID;
+    }
+
+    public String getFromUserEmail() {
+        return fromUserEmail;
+    }
+
+    public void setFromUserEmail(String fromUserEmail) {
+        this.fromUserEmail = fromUserEmail;
     }
 }

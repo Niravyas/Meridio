@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -48,12 +51,26 @@ public class RequestsReceivedActivity extends BaseActivity {
 
         //fetch requests here, using asynctask
         new fetchRequests(body).execute();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //TODO
+                // call books available with requestor w/ {"userId":getItem(position).getFromUsrId()
+                Log.v("books avlblwReq", String.valueOf(adapter.getItem(position).getFromUserID()));
+//                Intent i  = new Intent(RequestsReceivedActivity.this, RequestorBooksActivity.class);
+//                Bundle extras = new Bundle();
+//                extras.putString("fromUserId", String.valueOf(adapter.getItem(position).getFromUserID()));
+////                extras.putString("");
+//                startActivity(i);
+            }
+        });
     }
 
     private String buildMyRequestsRequestBody(){
         User user = User.getInstance();
         String body = "{"
-                + "\"toUserId\":" + "1"//user.getUserID()
+                + "\"toUserId\":" + user.getUserID()
                 + "}";
         Log.v("request body", body);
         return body;
@@ -267,7 +284,8 @@ public class RequestsReceivedActivity extends BaseActivity {
                 String status = (request.has("status"))?request.get("status").toString():null;
                 String acceptorWantsBook = (request.has("acceptorWantsBook"))?request.get("acceptorWantsBook").toString():null;
                 String requestorWantsBook = (request.has("requestorWantsBook"))?request.get("requestorWantsBook").toString():null;
-                Request r = new Request(reqId, fromUserId, toUserId, status, acceptorWantsBook, requestorWantsBook);
+                String fromUserEmail = (request.has("fromEmail"))?request.get("fromEmail").toString():null;
+                Request r = new Request(reqId, fromUserId, toUserId, status, acceptorWantsBook, requestorWantsBook, fromUserEmail);
                 requestArrayList.add(r);
             }
         } catch (JSONException e) {
