@@ -13,4 +13,9 @@
         android:orderInCategory="100"
         android:title="Requests Sent"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_req_to_me"
+        android:orderInCategory="100"
+        android:title="Requests Received"
+        app:showAsAction="never" />
 </menu>

@@ -12,19 +12,17 @@ import android.widget.TextView;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 /**
  * Created by yadav on 7/24/2017.
  */
 
-public class MyRequestViewAdapter extends ArrayAdapter<Request> {
+public class RequestsSentViewAdapter extends ArrayAdapter<Request> {
     private AppCompatActivity activity;
     private List<Request> requestList;
 
-    public MyRequestViewAdapter(AppCompatActivity context, int resource, List<Request> objects) {
+    public RequestsSentViewAdapter(AppCompatActivity context, int resource, List<Request> objects) {
         super(context, resource, objects);
         this.activity = context;
         this.requestList = objects;
@@ -47,19 +45,19 @@ public class MyRequestViewAdapter extends ArrayAdapter<Request> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        MyRequestViewAdapter.ViewHolder holder;
+        RequestsSentViewAdapter.ViewHolder holder;
         LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         // If holder not exist then locate all view from UI file.
         if (convertView == null) {
             // inflate UI from XML file
-            convertView = inflater.inflate(R.layout.requestitem_listview, parent, false);
+            convertView = inflater.inflate(R.layout.requestsentitem_listview, parent, false);
             // get all UI view
-            holder = new MyRequestViewAdapter.ViewHolder(convertView);
+            holder = new RequestsSentViewAdapter.ViewHolder(convertView);
             // set tag for holder
             convertView.setTag(holder);
         } else {
             // if holder created, get tag from view
-            holder = (MyRequestViewAdapter.ViewHolder) convertView.getTag();
+            holder = (RequestsSentViewAdapter.ViewHolder) convertView.getTag();
         }
 
         holder.bookTitle.setText(getItem(position).getRequestorWantsBook());

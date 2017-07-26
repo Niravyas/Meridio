@@ -48,18 +48,22 @@
                         android:id="@+id/genre"
                         android:hint="Genre"/>
                 </android.support.design.widget.TextInputLayout>
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
+                <ScrollView
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginTop="8dp">
-                    <TextView
+                    android:layout_width="match_parent">
+                    <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/description"
-                        android:inputType="textMultiLine"
-                        android:hint="Brief Description"/>
-                </android.support.design.widget.TextInputLayout>
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/description"
+                            android:inputType="textMultiLine"
+                            android:hint="Brief Description"/>
+                    </android.support.design.widget.TextInputLayout>
+                </ScrollView>
             </LinearLayout>
 
         <LinearLayout
@@ -67,7 +71,7 @@
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_marginTop="16dp"
-            android:layout_weight="0.2">
+            android:layout_weight="0.1">
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_post_book"
                 android:layout_width="0dp"

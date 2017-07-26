@@ -26,7 +26,10 @@ public class BaseActivity extends AppCompatActivity {
                 i = new Intent(getApplicationContext(), LibraryActivity.class);
                 startActivity(i);
             case R.id.action_req_from_me:
-                i = new Intent(getApplicationContext(), MyRequestsActivity.class);
+                i = new Intent(getApplicationContext(), RequestsSentActivity.class);
+                startActivity(i);
+            case R.id.action_req_to_me:
+                i = new Intent(getApplicationContext(), RequestsReceivedActivity.class);
                 startActivity(i);
             default:
                 return super.onOptionsItemSelected(item);

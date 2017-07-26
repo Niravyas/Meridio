@@ -596,7 +596,7 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
     private String buildPostBookRequestBody(){
         User user = User.getInstance();
         String body = "{"
-                + "\"userId\":" + "123"//user.getUserID()
+                + "\"userId\":" + user.getUserID()
                 + ",\"isbn\": \"" + isbnForImage + "\""
                 + ",\"latitude\": \"" + Double.toString(lastKnownLocation.getLatitude()) + "\""
                 + ",\"longitude\": \"" + Double.toString(lastKnownLocation.getLongitude()) + "\""

@@ -103,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                        setUser(loginResult);
                       //  textView.setText("Happy happy "+loginResult.getAccessToken().getUserId() + "\n" + loginResult.getAccessToken().getToken());
                         fbUser.setUserID(loginResult.getAccessToken().getUserId());
+                        Log.v("set userID was called", "should be set to:" + loginResult.getAccessToken().getUserId());
                         Intent myIntent = new Intent(LoginActivity.this, LandingActivity.class);
                         //myIntent.putExtra("key", value); //Optional parameters
                         LoginActivity.this.startActivity(myIntent);

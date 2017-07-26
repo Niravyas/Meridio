@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -28,7 +27,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MyRequestsActivity extends AppCompatActivity {
+public class RequestsSentActivity extends BaseActivity {
 
     private ConnectivityManager mConnectivityManager = null;
     ProgressDialog mProgress;
@@ -41,9 +40,9 @@ public class MyRequestsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_requests);
+        setContentView(R.layout.activity_requests_sent);
 
-        listView = (ListView) findViewById(R.id.list_my_requests);
+        listView = (ListView) findViewById(R.id.list_sent_requests);
         body = buildMyRequestsRequestBody();
 
         //fetch requests here, using asynctask
@@ -68,6 +67,8 @@ public class MyRequestsActivity extends AppCompatActivity {
             alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
             alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    if(mProgress != null)
+                        mProgress.hide();
                     finish();
                 }
             });
@@ -100,6 +101,8 @@ public class MyRequestsActivity extends AppCompatActivity {
             alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
             alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    if(mProgress != null)
+                        mProgress.hide();
                     finish();
 
                 }
@@ -141,7 +144,7 @@ public class MyRequestsActivity extends AppCompatActivity {
                 cancel(true);
                 return;
             }
-            mProgress = new ProgressDialog(MyRequestsActivity.this);
+            mProgress = new ProgressDialog(RequestsSentActivity.this);
             mProgress.setMessage("Fetching your requests...");
             mProgress.show();
         }
@@ -238,7 +241,7 @@ public class MyRequestsActivity extends AppCompatActivity {
                         String result = responseJson.getString("status");
                         if (result.equals("success") && responseJson.getJSONArray("tradeRequests").length() > 0){
                             setRequests(responseJson);
-                            adapter = new MyRequestViewAdapter(MyRequestsActivity.this, R.layout.requestitem_listview, requestArrayList);
+                            adapter = new RequestsSentViewAdapter(RequestsSentActivity.this, R.layout.requestsentitem_listview, requestArrayList);
                             listView.setAdapter(adapter);
                         }
                     } catch (JSONException e) {

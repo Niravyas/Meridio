@@ -91,19 +91,20 @@
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".LandingActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ManualISBNActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".BooksAroundMeActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".LibraryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RequestsSentActivity"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".MyRequestsActivity"
-            android:screenOrientation="portrait">
-
+        <activity android:name=".RequestsReceivedActivity">
         </activity>
     </application>
 

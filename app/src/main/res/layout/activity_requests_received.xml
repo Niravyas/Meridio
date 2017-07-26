@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".LibraryActivity"
-    >
+    tools:context=".RequestsReceivedActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,11 +16,11 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".LibraryActivity"
-        tools:showIn="@layout/activity_library">
+        tools:context=".RequestsReceivedActivity"
+        tools:showIn="@layout/activity_requests_sent">
 
         <ListView
-            android:id="@+id/list_library"
+            android:id="@+id/list_received_requests"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="none"/>
