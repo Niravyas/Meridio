@@ -39,7 +39,9 @@ public class RequestsReceivedActivity extends BaseActivity {
     private ArrayList<Request> requestArrayList;
     private ArrayAdapter<Request> adapter;
     private String body;
-
+    public final static String USERID = "userId";
+    public final static String REQUESTID = "requestId";
+    public final static String ACCEPTORWANTSBOOKID = "acceptorWantsBookId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +60,15 @@ public class RequestsReceivedActivity extends BaseActivity {
                 //TODO
                 // call books available with requestor w/ {"userId":getItem(position).getFromUsrId()
                 Log.v("books avlblwReq", String.valueOf(adapter.getItem(position).getFromUserID()));
-//                Intent i  = new Intent(RequestsReceivedActivity.this, RequestorBooksActivity.class);
-//                Bundle extras = new Bundle();
-//                extras.putString("fromUserId", String.valueOf(adapter.getItem(position).getFromUserID()));
-////                extras.putString("");
-//                startActivity(i);
+                Intent i  = new Intent(RequestsReceivedActivity.this, RequestorBooksActivity.class);
+                Bundle extras = new Bundle();
+                extras.putString(USERID, String.valueOf(adapter.getItem(position).getFromUserID()));
+                extras.putString(REQUESTID, String.valueOf(adapter.getItem(position).getId()));
+                Log.v("userID put in extra", extras.getString(USERID));
+                Log.v("reqID put in extra", extras.getString(REQUESTID));
+                i.putExtra(USERID,String.valueOf(adapter.getItem(position).getFromUserID()) );
+                i.putExtra(REQUESTID, String.valueOf(adapter.getItem(position).getId()));
+                startActivity(i);
             }
         });
     }
@@ -282,10 +288,10 @@ public class RequestsReceivedActivity extends BaseActivity {
                 int fromUserId = (request.has("fromUserId"))?Integer.parseInt(request.get("fromUserId").toString()):null;
                 int toUserId = (request.has("toUserId"))?Integer.parseInt(request.get("toUserId").toString()):null;
                 String status = (request.has("status"))?request.get("status").toString():null;
-                String acceptorWantsBook = (request.has("acceptorWantsBook"))?request.get("acceptorWantsBook").toString():null;
+                String acceptorWantsBookID = (request.has("acceptorWantsBookID"))?request.get("acceptorWantsBookID").toString():null;
                 String requestorWantsBook = (request.has("requestorWantsBook"))?request.get("requestorWantsBook").toString():null;
                 String fromUserEmail = (request.has("fromEmail"))?request.get("fromEmail").toString():null;
-                Request r = new Request(reqId, fromUserId, toUserId, status, acceptorWantsBook, requestorWantsBook, fromUserEmail);
+                Request r = new Request(reqId, fromUserId, toUserId, status, acceptorWantsBookID, requestorWantsBook, fromUserEmail);
                 requestArrayList.add(r);
             }
         } catch (JSONException e) {
