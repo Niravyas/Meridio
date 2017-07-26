@@ -22,6 +22,7 @@ import com.facebook.login.widget.LoginButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -103,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                        setUser(loginResult);
                       //  textView.setText("Happy happy "+loginResult.getAccessToken().getUserId() + "\n" + loginResult.getAccessToken().getToken());
                         fbUser.setUserID(loginResult.getAccessToken().getUserId());
-                        Log.v("set userID was called", "should be set to:" + loginResult.getAccessToken().getUserId());
+                        Log.v("FB returned User ID", "should be set to:" + loginResult.getAccessToken().getUserId());
                         Intent myIntent = new Intent(LoginActivity.this, LandingActivity.class);
                         //myIntent.putExtra("key", value); //Optional parameters
                         LoginActivity.this.startActivity(myIntent);
@@ -129,10 +130,10 @@ public class LoginActivity extends AppCompatActivity {
         new sendUserInfo().execute();
     }
 
-    private class sendUserInfo extends AsyncTask<String, String, String> {
+    private class sendUserInfo extends AsyncTask<String, String, JSONObject> {
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected JSONObject doInBackground(String... strings) {
             // Create URL
             try {
                 URL myEndpoint = new URL("http://ec2-54-85-207-189.compute-1.amazonaws.com:4000/setUserSession");
@@ -161,34 +162,57 @@ public class LoginActivity extends AppCompatActivity {
                 os.close();
 
                 if (myConnection.getResponseCode() == 200) {
-                    String a = ""+myConnection.getResponseCode();
-                    Log.i("Success- Status Code", a);
-                    Log.i("Success- StatusMessage", myConnection.getResponseMessage());
-                    // Success
-                    // Further processing here
-                    InputStream responseBody = myConnection.getInputStream();
 
-                    InputStreamReader responseBodyReader =
-                            new InputStreamReader(responseBody, "UTF-8");
-
-                    jsonReader = new JsonReader(responseBodyReader);
-                    jsonReader.beginObject(); // Start processing the JSON object
-                    while (jsonReader.hasNext()) { // Loop through all keys
-                        String key = jsonReader.nextName(); // Fetch the next key
-                        if (key.equals("userId")) { // Check if desired key
-                            // Fetch the value as a String
-                            fbUser.setUserID(jsonReader.nextString());
-
-                            // Do something with the value
-                            // ...
-                            Log.i("value of userID", fbUser.getUserID());
-
-                            break; // Break out of the loop
-                        } else {
-                            jsonReader.skipValue(); // Skip values of other keys
-                        }
+                    // Read data from response.
+                    StringBuilder builder = new StringBuilder();
+                    BufferedReader responseReader = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+                    String line = responseReader.readLine();
+                    while (line != null) {
+                        builder.append(line);
+                        line = responseReader.readLine();
                     }
-                    jsonReader.close();
+                    String responseString = builder.toString();
+                    Log.v(getClass().getName(), "Response String: " + responseString);
+                    JSONObject responseJson = new JSONObject(responseString);
+                    // Close connection and return response code.
+                    myConnection.disconnect();
+
+                    return responseJson;
+//
+//
+//
+//
+//                    String a = ""+myConnection.getResponseCode();
+//                    Log.i("Success- Status Code", a);
+//                    Log.i("Success- StatusMessage", myConnection.getResponseMessage());
+//                    // Success
+//                    // Further processing here
+//                    InputStream responseBody = myConnection.getInputStream();
+//                    Log.v("responseBody", responseBody.toString());
+//                    InputStreamReader responseBodyReader =
+//                            new InputStreamReader(responseBody, "UTF-8");
+//
+//                    jsonReader = new JsonReader(responseBodyReader);
+//                    jsonReader.beginObject(); // Start processing the JSON object
+//                    while (jsonReader.hasNext()) { // Loop through all keys
+//                        String key = jsonReader.nextName();// Fetch the next key
+//                        Log.v("jsonReader Key", key);
+//                        if (key.equals("userId")) { // Check if desired key
+//                            // Fetch the value as a String
+//                            String APIreturnedUserId = jsonReader.nextString();
+//                            fbUser.setUserID(APIreturnedUserId);
+//                            Log.v("API returned userID", APIreturnedUserId);
+//
+//                            // Do something with the value
+//                            // ...
+//                            Log.i("value of userID", fbUser.getUserID());
+//
+//                            break; // Break out of the loop
+//                        } else {
+//                            jsonReader.skipValue(); // Skip values of other keys
+//                        }
+//                    }
+//                    jsonReader.close();
                 } else {
                     // Error handling code goes here
                     String a = ""+myConnection.getResponseCode();
@@ -196,9 +220,6 @@ public class LoginActivity extends AppCompatActivity {
                     Log.i("Failure- StatusMessage", myConnection.getResponseMessage());
 
                 }
-
-
-
                 myConnection.disconnect();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -207,10 +228,26 @@ public class LoginActivity extends AppCompatActivity {
             return null;
 
         }
-        protected void onPostExecute(String res) {
-            //TextView messText = (TextView) findViewById(R.id.barcode);
-           // messText.setText(messageTweet);
-
+        protected void onPostExecute(JSONObject responseJson) {
+            if(responseJson.has("status") ) {
+                try {
+                    String result = responseJson.getString("status");
+                    Log.v("result in postexecute", result);
+                    if (result.equals("success")){
+                        Log.v("session API success", "result");
+                        Log.v("responseJson", responseJson.toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(responseJson.has("userId")){
+                try {
+                    fbUser.setUserID(responseJson.get("userId").toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
     @Override

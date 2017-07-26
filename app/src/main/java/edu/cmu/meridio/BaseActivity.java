@@ -24,15 +24,14 @@ public class BaseActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_library:
                 i = new Intent(getApplicationContext(), LibraryActivity.class);
-                startActivity(i);
+                startActivity(i); break;
             case R.id.action_req_from_me:
                 i = new Intent(getApplicationContext(), RequestsSentActivity.class);
-                startActivity(i);
+                startActivity(i); break;
             case R.id.action_req_to_me:
                 i = new Intent(getApplicationContext(), RequestsReceivedActivity.class);
-                startActivity(i);
-            default:
-                return super.onOptionsItemSelected(item);
+                startActivity(i); break;
         }
+        return super.onOptionsItemSelected(item);
     }
 }
