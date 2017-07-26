@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.registerCallback(callBackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
-                    public void onSuccess(LoginResult loginResult) {
+                    public void onSuccess(final LoginResult loginResult) {
 
 
                         //initialise the singleton
@@ -83,10 +83,12 @@ public class LoginActivity extends AppCompatActivity {
                                         // Application code
                                         try {
 
-                                             name = object.getString("name");
-                                            email = object.getString("email");
-                                            Log.i("Name", name);
-                                            Log.i("Name", email);
+                                            LoginActivity.this.name = object.getString("name");
+                                            LoginActivity.this.email = object.getString("email");
+                                            Log.i("LoginActivityName", LoginActivity.this.name);
+                                            Log.i("LoginActivityEmail", LoginActivity.this.email);
+
+                                            setUser(loginResult);
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -98,10 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                         parameters.putString("fields", "id,name,email,gender,birthday");
                         request.setParameters(parameters);
                         request.executeAsync();
-
-
-
-                       setUser(loginResult);
+                        Log.v("calling setUser now", "true");
                       //  textView.setText("Happy happy "+loginResult.getAccessToken().getUserId() + "\n" + loginResult.getAccessToken().getToken());
                         fbUser.setUserID(loginResult.getAccessToken().getUserId());
                         Log.v("FB returned User ID", "should be set to:" + loginResult.getAccessToken().getUserId());
@@ -126,6 +125,10 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
     private void setUser(LoginResult loginResult){
+        if(name == null)
+            Log.v("name", "set to null");
+        else
+            Log.v("name ", "should be set");
         fbLoginResult = loginResult;
         new sendUserInfo().execute();
     }
@@ -150,9 +153,12 @@ public class LoginActivity extends AppCompatActivity {
                 myConnection.setDoInput(true);
 
                 JSONObject jsonParam = new JSONObject();
-                jsonParam.put("name", name);//B92E1BCC-BE26-45AB-ACA2-27F9AF627306
-                jsonParam.put("sessionToken", fbLoginResult.getAccessToken().getToken());
-                jsonParam.put("emailId", email);
+                jsonParam.put("name", LoginActivity.this.name);//B92E1BCC-BE26-45AB-ACA2-27F9AF627306
+                Log.v("setName in json", LoginActivity.this.name.toString());
+                Log.v("setEmail in json", LoginActivity.this.email.toString());
+                Log.v("setsessionToken in json", LoginActivity.this.fbLoginResult.getAccessToken().getToken());
+                jsonParam.put("sessionToken", LoginActivity.this.fbLoginResult.getAccessToken().getToken().toString());
+                jsonParam.put("emailId", LoginActivity.this.email);
 
                 DataOutputStream os = new DataOutputStream(myConnection.getOutputStream());
 
@@ -229,7 +235,7 @@ public class LoginActivity extends AppCompatActivity {
 
         }
         protected void onPostExecute(JSONObject responseJson) {
-            if(responseJson.has("status") ) {
+            if(responseJson!= null && responseJson.has("status") ) {
                 try {
                     String result = responseJson.getString("status");
                     Log.v("result in postexecute", result);
@@ -241,7 +247,7 @@ public class LoginActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            if(responseJson.has("userId")){
+            if(responseJson!= null && responseJson.has("userId")){
                 try {
                     fbUser.setUserID(responseJson.get("userId").toString());
                 } catch (JSONException e) {
