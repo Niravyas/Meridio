@@ -140,6 +140,8 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mProgress != null)
+                    mProgress.hide();
                 finish();
             }
         });
@@ -282,6 +284,8 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
             alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
             alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    if(mProgress != null)
+                        mProgress.hide();
                     finish();
 
                 }
@@ -302,6 +306,8 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
             alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
             alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    if(mProgress != null)
+                        mProgress.hide();
                     finish();
 
                 }

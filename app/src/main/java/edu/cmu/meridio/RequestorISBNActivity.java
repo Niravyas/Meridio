@@ -204,6 +204,8 @@ public class RequestorISBNActivity extends AppCompatActivity {
             alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
             alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    if(mProgress != null)
+                        mProgress.hide();
                     finish();
 
                 }
@@ -224,6 +226,8 @@ public class RequestorISBNActivity extends AppCompatActivity {
             alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
             alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    if(mProgress != null)
+                        mProgress.hide();
                     finish();
 
                 }
