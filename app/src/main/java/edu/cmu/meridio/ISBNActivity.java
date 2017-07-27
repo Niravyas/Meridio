@@ -112,7 +112,7 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
         if(lastKnownLocation == null){
             Log.v("battery draining", "code in action");
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-            mLastLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             try {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         LOCATION_INTERVAL, LOCATION_DISTANCE, ISBNActivity.this);

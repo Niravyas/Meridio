@@ -1,7 +1,10 @@
 package edu.cmu.meridio;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
@@ -45,6 +48,9 @@ public class LoginActivity extends AppCompatActivity {
     String name;
     String email;
     String sessionToken;
+//    Context context = getBaseContext();
+    SharedPreferences userIdPref;
+    private static final String USERID = "userId";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +62,17 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setReadPermissions(Arrays.asList(
                 "public_profile", "email", "user_birthday", "user_friends"));
         callBackManager = CallbackManager.Factory.create();
+        final Intent myIntent = new Intent(LoginActivity.this, LandingActivity.class);
 
-        loginButton.registerCallback(callBackManager,
+        userIdPref = this.getPreferences(Context.MODE_PRIVATE);
+        Log.v("userIdPref.contains", String.valueOf(userIdPref.getAll()));
+        if (userIdPref.contains(USERID)){
+            Log.v("found userId", "in sharedPref");
+            fbUser = User.getInstance();
+            fbUser.setUserID(userIdPref.getString(USERID, null));
+            startActivity(myIntent);
+        }else {
+            loginButton.registerCallback(callBackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(final LoginResult loginResult) {
@@ -103,10 +118,9 @@ public class LoginActivity extends AppCompatActivity {
                         request.setParameters(parameters);
                         request.executeAsync();
                         Log.v("calling setUser now", "true");
-                      //  textView.setText("Happy happy "+loginResult.getAccessToken().getUserId() + "\n" + loginResult.getAccessToken().getToken());
-//                        fbUser.setUserID(loginResult.getAccessToken().getUserId());
+                        //  textView.setText("Happy happy "+loginResult.getAccessToken().getUserId() + "\n" + loginResult.getAccessToken().getToken());
+                        //                        fbUser.setUserID(loginResult.getAccessToken().getUserId());
                         Log.v("FB returned User ID", "should be set to:" + loginResult.getAccessToken().getUserId());
-                        Intent myIntent = new Intent(LoginActivity.this, LandingActivity.class);
                         //myIntent.putExtra("key", value); //Optional parameters
                         LoginActivity.this.startActivity(myIntent);
 
@@ -119,12 +133,13 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
 
-
                     @Override
                     public void onError(FacebookException exception) {
                         // App code
                     }
-                });
+                }
+            );
+        }
     }
     private void setUser(LoginResult loginResult){
 
@@ -247,7 +262,13 @@ public class LoginActivity extends AppCompatActivity {
             }
             if(responseJson!= null && responseJson.has("userId")){
                 try {
+                    Log.v("set sharedPref", "coz not found in sharedPreferences");
                     fbUser.setUserID(responseJson.get("userId").toString());
+                    SharedPreferences.Editor editor = userIdPref.edit();
+                    editor.putString(LoginActivity.USERID, responseJson.get("userId").toString());
+                    editor.commit();
+                    Log.v(LoginActivity.USERID, responseJson.get("userId").toString());
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
