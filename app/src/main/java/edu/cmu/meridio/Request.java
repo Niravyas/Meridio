@@ -6,7 +6,7 @@ package edu.cmu.meridio;
 
 public class Request {
     private String requestorWantsBook;
-    private String acceptorWantsBook;
+    private String acceptorWantsBookID;
     private int id;
     private int fromUserID;
     private String fromUserEmail;
@@ -16,10 +16,10 @@ public class Request {
     public Request(int id, int fromUserID,
                    int toUserID,
                    String status,
-                   String acceptorWantsBook,
+                   String acceptorWantsBookID,
                    String requestorWantsBook,
                    String fromUserEmail){
-        this.acceptorWantsBook = acceptorWantsBook;
+        this.acceptorWantsBookID = acceptorWantsBookID;
         this.requestorWantsBook = requestorWantsBook;
         this.fromUserEmail = fromUserEmail;
         this.id = id;
@@ -62,12 +62,12 @@ public class Request {
         this.requestorWantsBook = requestorWantsBook;
     }
 
-    public String getAcceptorWantsBook() {
-        return acceptorWantsBook;
+    public String getAcceptorWantsBookID() {
+        return acceptorWantsBookID;
     }
 
-    public void setAcceptorWantsBook(String acceptorWantsBook) {
-        this.acceptorWantsBook = acceptorWantsBook;
+    public void setAcceptorWantsBookID(String acceptorWantsBook) {
+        this.acceptorWantsBookID = acceptorWantsBook;
     }
 
     public int getFromUserID() {

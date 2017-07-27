@@ -104,8 +104,9 @@
         <activity
             android:name=".RequestsSentActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".RequestsReceivedActivity"></activity>
-        <activity android:name=".RequestorBooksActivity"></activity>
+        <activity android:name=".RequestsReceivedActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".RequestorBooksActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".RequestorISBNActivity" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

@@ -24,7 +24,7 @@
     <string name="manual_isbn">Book ISBN</string>
     <string name="get_details">Get Details</string>
     <string name="cancel">Cancel</string>
-    <string name="post_success">Congratulations!\nYour book was successfully posted!</string>
+    <string name="post_success">Congratulations!\nYour book was successfully posted!\nClick OK to go to your library!</string>
     <string name="post_fail">Oops! Something went wrong and the book could not be posted! Retry in some time!</string>
     <string name="library_null_response">We\'re unable to fetch any books from your library :(</string>
     <string name="delete_book_null_response">Could not delete. Please try again.</string>
@@ -33,5 +33,8 @@
     <string name="status_pending">pending</string>
     <string name="status_approved">approved</string>
     <string name="status_declined">declined</string>
-
+    <string name="requestor_library_null_response">We\'re unable to fetch any books from requestor\'s library :(</string>
+    <string name="approve">Approve</string>
+    <string name="decline">Decline</string>
+    <string name="approve_decline_success">Request was successfully %1$s.</string>
 </resources>

@@ -10,6 +10,7 @@ public class Book {
     private String author;
     private String genre;
     private String description;
+    private String isbn;
 
     public int getId() {
         return id;
@@ -51,8 +52,22 @@ public class Book {
         this.description = description;
     }
 
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
     public Book(int id, String title){
         this.id = id;
+        this.title = title;
+    }
+
+    public Book (int id, String isbn, String title){
+        this.id = id;
+        this.isbn = isbn;
         this.title = title;
     }
 }
