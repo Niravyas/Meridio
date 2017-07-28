@@ -9,6 +9,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -26,6 +28,7 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class RequestsSentActivity extends BaseActivity {
 
@@ -36,6 +39,29 @@ public class RequestsSentActivity extends BaseActivity {
     private ArrayAdapter<Request> adapter;
     private String body;
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.sort_asc).setVisible(true);
+        menu.findItem(R.id.sort_desc).setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()){
+            case R.id.sort_asc:
+                Collections.sort(requestArrayList);
+                adapter.notifyDataSetChanged();
+                break;
+            case R.id.sort_desc:
+                Collections.sort(requestArrayList, Collections.<Request>reverseOrder());
+                adapter.notifyDataSetChanged();
+                break;
+        }
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

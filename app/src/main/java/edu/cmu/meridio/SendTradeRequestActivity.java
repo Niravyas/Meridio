@@ -49,7 +49,7 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
-public class SendTradeRequestActivity extends BaseActivity implements LocationListener{
+public class SendTradeRequestActivity extends BaseActivity{
 
     private ConnectivityManager mConnectivityManager = null;
     User fbUser;
@@ -57,23 +57,18 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
     TextView title;
     TextView genre;
     TextView description;
+    String strTitle;
+    String strGenre;
+    String strDescription;
+    String strUrl;
     Button request;
     Button cancel;
     String bookId;
     private String isbnForImage;
-    private static final String coverLibraryURL = "http://covers.openlibrary.org/b/isbn/";
-    private static final String suffixLarge = "-L.jpg?default=false";
-    private static final String suffixMedium = "-M.jpg?default=false";
     private ImageView imageView;
     private boolean getFromCoversLibrary = false;
     private String imageURLString;
     private String postBookRequest;
-    private final static int RC_HANDLE_LOC_PERM = 2;
-    private Location lastKnownLocation;
-    private LocationManager mLocationManager;
-    private static final int LOCATION_INTERVAL = 0;
-    private static final float LOCATION_DISTANCE = 0f;
-    private Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,19 +76,24 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
         setContentView(R.layout.activity_send_trade_request);
         Intent data = getIntent();
         fbUser = User.getInstance();
-       isbnForImage = data.getStringExtra("isbn");
+        isbnForImage = data.getStringExtra("isbn");
         bookId = data.getStringExtra("bookId");
+        strTitle = data.getStringExtra("title");
+        strGenre = data.getStringExtra("genre");
+        strDescription = data.getStringExtra("description");
+        strUrl = data.getStringExtra("imageUrl");
         imageView = (ImageView) findViewById(R.id.imageReq);
 
         title = (TextView) findViewById(R.id.titleReq);
         genre = (TextView) findViewById(R.id.genreReq);
         description = (TextView) findViewById(R.id.descriptionReq);
-        imageURLString = coverLibraryURL + isbnForImage + suffixLarge;
+
         request = (Button) findViewById(R.id.btn_post_bookReq);
         cancel = (Button) findViewById(R.id.btn_cancel_post_bookReq);
-        new GoogleApiRequest(isbnForImage).execute();
 
-       request.setOnClickListener(new View.OnClickListener() {
+        setUIDetails(strTitle, strGenre, strDescription, strUrl);
+
+        request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String request = buildRequestBookRequestBody();
@@ -110,132 +110,6 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
         });
 
 
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        lastKnownLocation.set(location);
-        Log.v("onlocationChanged", "true");
-        Log.v("new location", location.toString());
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.v("onStatusChanged", "true");
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        Log.v("onProviderEnabled", "true");
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        Toast.makeText(SendTradeRequestActivity.this, "Please enable location service", Toast.LENGTH_SHORT).show();
-    }
-
-    // Received ISBN from Barcode Scanner. Send to GoogleBooks to obtain book information.
-    public class GoogleApiRequest extends AsyncTask<String, Object, JSONObject> {
-        String isbn;
-        GoogleApiRequest(String isbn){
-            this.isbn = isbn;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            // Check network connection.
-            if(isNetworkConnected() == false){
-                // Cancel request.
-                Log.v(getClass().getName(), "Not connected to the internet");
-                cancel(true);
-                return;
-            }
-            mProgress = new ProgressDialog(SendTradeRequestActivity.this);
-            mProgress.setMessage("Fetching your data...");
-            mProgress.show();
-        }
-        @Override
-        protected JSONObject doInBackground(String... isbns) {
-            Log.v("point1", "true");
-            // Stop if cancelled
-            if(isCancelled()){
-                Log.v("cancelled", "in doInBackground");
-                return null;
-            }
-
-            String apiUrlString = "https://www.googleapis.com/books/v1/volumes?q=isbn:"
-                    + this.isbn;
-            try{
-                HttpURLConnection connection = null;
-                // Build Connection.
-                try{
-                    URL url = new URL(apiUrlString);
-                    Log.v("URL called", apiUrlString);
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setReadTimeout(60000); // 1 minute
-                    connection.setConnectTimeout(60000); // 1 minute
-                } catch (MalformedURLException e) {
-                    // Impossible: The only two URLs used in the app are taken from string resources.
-                    e.printStackTrace();
-                } catch (ProtocolException e) {
-                    // Impossible: "GET" is a perfectly valid request method.
-                    e.printStackTrace();
-                }
-                int responseCode = connection.getResponseCode();
-                Log.v("point3", "true");
-                if(responseCode != 200){
-                    Log.v(getClass().getName(), "GoogleBooksAPI request failed. Response Code: " + responseCode);
-                    connection.disconnect();
-                    return null;
-                }
-
-                // Read data from response.
-                StringBuilder builder = new StringBuilder();
-                BufferedReader responseReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line = responseReader.readLine();
-                while (line != null){
-                    builder.append(line);
-                    line = responseReader.readLine();
-                }
-                String responseString = builder.toString();
-                Log.v(getClass().getName(), "Response String: " + responseString);
-                JSONObject responseJson = new JSONObject(responseString);
-                // Close connection and return response code.
-                connection.disconnect();
-
-                isCoverInCoversLibrary();
-
-                return responseJson;
-            } catch (SocketTimeoutException e) {
-                Log.v(getClass().getName(), "Connection timed out. Returning null");
-                return null;
-            } catch(IOException e){
-                Log.v(getClass().getName(), "IOException when connecting to Google Books API.");
-                e.printStackTrace();
-                return null;
-            } catch (JSONException e) {
-                Log.v(getClass().getName(), "JSONException when connecting to Google Books API.");
-                e.printStackTrace();
-                return null;
-            }
-        }
-        @Override
-        protected void onPostExecute(JSONObject responseJson) {
-            if(isCancelled()){
-                // Request was cancelled due to no network connection.
-                showNetworkDialog();
-            } else if(responseJson == null){
-                showSimpleDialog(getResources().getString(R.string.dialog_null_response));
-            }
-            else{
-                mProgress.hide();
-                Log.v("all went well", "in post execute");
-                // All went well. Do something with your new JSONObject.
-                bookJSONToTitle(responseJson);
-                displayCoverArt(responseJson);
-            }
-        }
     }
 
     private void showNetworkDialog() {
@@ -295,111 +169,6 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
         } else {
             return false;
         }
-    }
-
-    private void setTitle(String title){
-        try{
-            this.title.setText(title, TextView.BufferType.EDITABLE);
-        } catch(NullPointerException e){
-            e.printStackTrace();
-        }
-    }
-    private void bookJSONToTitle(JSONObject jsonObject){
-        try {
-            if (jsonObject.length() == 0 || jsonObject.getInt("totalItems") == 0) {
-                mProgress.cancel();
-                finish();
-                return;
-            }
-//            JSONArray books;
-            if(!jsonObject.has("items"))
-                throw new JSONException(String.format(getString(R.string.json_missing_key), "items"));
-            JSONArray books = jsonObject.getJSONArray("items");
-            Log.v("books",books.toString());
-
-            //Set title
-            JSONObject firstBook = (JSONObject) books.get(0);
-            if(!firstBook.has("volumeInfo"))
-                throw new JSONException(String.format(getString(R.string.json_missing_key), "volumeInfo"));
-            JSONObject firstBookVolumeInfo = firstBook.getJSONObject("volumeInfo");
-            setTitle(firstBookVolumeInfo.getString("title"));
-            Log.v("firstBookVolumeInfo", firstBookVolumeInfo.toString());
-
-            //Set Genre
-            if(!firstBookVolumeInfo.has("categories")){
-                throw new JSONException(String.format(getString(R.string.json_missing_key), "categories"));
-            }
-            JSONArray jsonCategories = firstBookVolumeInfo.getJSONArray("categories");
-            StringBuilder sb = new StringBuilder();
-            for(int i = 0; i< jsonCategories.length(); i++){
-                sb.append(jsonCategories.get(i).toString());
-                if( i != jsonCategories.length() - 1){
-                    sb.append(", ");
-                }
-            }
-            this.genre.setText(sb.toString(), TextView.BufferType.EDITABLE);
-
-            //set description
-            if(firstBookVolumeInfo.has("description")) {
-                String description = firstBookVolumeInfo.getString("description");
-                this.description.setText(description, TextView.BufferType.EDITABLE);
-            }
-
-            Log.v("firstBookVlIn.getString", firstBookVolumeInfo.getString("title"));
-        } catch(JSONException e){
-            e.printStackTrace();
-        }
-    }
-
-    private void displayCoverArt(JSONObject jsonObject){
-
-        if(getFromCoversLibrary == true){
-            Picasso.with(getApplicationContext()).load(imageURLString).into(imageView);
-        } else {
-            try {
-                fetchFromGoogleBookThumbnails(jsonObject);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void isCoverInCoversLibrary() throws IOException {
-
-        Log.v("coverlibraryURL", imageURLString);
-        HttpURLConnection connection = null;
-        try {
-            // Build Connection.
-            URL url = new URL(imageURLString);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setReadTimeout(10000); // 10 seconds
-            connection.setConnectTimeout(10000); // 10 seconds
-        } catch (MalformedURLException e) {
-            // Impossible: The only two URLs used in the app are taken from string resources.
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            // Impossible: "GET" is a perfectly valid request method.
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        int responseCode = connection.getResponseCode();
-        if(responseCode == 404){
-            Log.v(getClass().getName(), "Failed to get book covers from covers library: " + responseCode);
-            connection.disconnect();
-        }
-        if(responseCode == 200)
-            getFromCoversLibrary = true;
-    }
-
-    private void fetchFromGoogleBookThumbnails(JSONObject jsonObject) throws JSONException {
-        JSONArray books = jsonObject.getJSONArray("items");
-        JSONObject firstBook = (JSONObject) books.get(0);
-        JSONObject firstBookVolumeInfo = firstBook.getJSONObject("volumeInfo");
-        JSONObject imageLinksJSON = firstBookVolumeInfo.getJSONObject("imageLinks");
-        String thumbnailURL = imageLinksJSON.getString("thumbnail");
-        Picasso.with(getApplicationContext()).load(thumbnailURL).into(imageView);
     }
 
     private class RequestBook extends AsyncTask<Void, Void, JSONObject>{
@@ -464,7 +233,7 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
                 if (responseCode != 200) {
                     Log.v(getClass().getName(), "createTradeRequest API request failed. Response Code: " + responseCode);
                     connection.disconnect();
-                    showPostFailDialog(getString(R.string.post_fail));
+                    showRequestFailDialog(getString(R.string.request_fail));
                     return null;
                 }
 
@@ -505,7 +274,7 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
                 // Request was cancelled due to no network connection.
                 showNetworkDialog();
             } else if(responseJson == null){
-                showSimpleDialog(getResources().getString(R.string.dialog_null_response));
+                showRequestFailDialog(getString(R.string.request_fail));
             }
             else{
                 mProgress.hide();
@@ -513,7 +282,7 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
                     try {
                         String result = responseJson.getString("status");
                         if (result.equals("success")){
-                            showPostSuccessDialog(getString(R.string.post_success));
+                            showRequestSuccessfulDialog(getString(R.string.request_success));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -521,14 +290,11 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
                     Log.v("book post success", "in post execute");
                 }
             }
-            //Stop requesting location updates
-            if(mLocationManager != null)
-                mLocationManager.removeUpdates(SendTradeRequestActivity.this);
         }
     }
 
 
-    private void showPostSuccessDialog(String showString) {
+    private void showRequestSuccessfulDialog(String showString) {
         try {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
@@ -537,8 +303,8 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
             alertDialog.setIcon(R.drawable.success);
             alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    //redirect to library
-                    Intent i = new Intent(getApplicationContext(), LibraryActivity.class);
+                    //redirect to Landing
+                    Intent i = new Intent(getApplicationContext(), LandingActivity.class);
                     startActivity(i);
                 }
             });
@@ -549,7 +315,7 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
         }
     }
 
-    private void showPostFailDialog(String showString) {
+    private void showRequestFailDialog(String showString) {
         try {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
@@ -567,38 +333,16 @@ public class SendTradeRequestActivity extends BaseActivity implements LocationLi
         String body = "{"
                 + "\"fromUserId\":" + fbUser.getUserID()
                 + ",\"requestorWantsBookId\": \"" + bookId + "\""
-              /*  + ",\"latitude\": \"" + Double.toString(lastKnownLocation.getLatitude()) + "\""
-                + ",\"longitude\": \"" + Double.toString(lastKnownLocation.getLongitude()) + "\""
-                +",\"imageUrl\": \"" + imageURLString + "\""
-                +",\"title\": \"" + title.getText().toString() + "\""
-                +",\"genre\": \"" + genre.getText().toString() + "\""
-                +",\"description\": \"" + description.getText().toString() + "\""
-                +",\"author\": \"" + "\""*/
                 + "}";
         Log.v("request body", body);
         return body;
     }
 
-    private void requestLocationPermission(){
-        Log.w("LocationPermission", "Location permission is not granted. Requesting permission");
-
-        final String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
-
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)) {
-            ActivityCompat.requestPermissions(this, permissions, RC_HANDLE_LOC_PERM);;
-            return;
-        }
-
-        final Activity thisActivity = this;
-
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityCompat.requestPermissions(thisActivity, permissions,
-                        RC_HANDLE_LOC_PERM);
-            }
-        };
+    private void setUIDetails(String title, String genre, String description, String imageUrl){
+        this.title.setText(title);
+        this.genre.setText(genre);
+        this.description.setText(description);
+        Picasso.with(getApplicationContext()).load(imageUrl).into(imageView);
+        Log.v("trying to set UI", title + "\n" + genre + "\n" + description + "\n" + imageUrl);
     }
-
 }

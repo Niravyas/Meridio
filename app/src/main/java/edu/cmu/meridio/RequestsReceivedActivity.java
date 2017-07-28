@@ -11,6 +11,8 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,6 +32,7 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class RequestsReceivedActivity extends BaseActivity {
 
@@ -42,6 +45,30 @@ public class RequestsReceivedActivity extends BaseActivity {
     public final static String USERID = "userId";
     public final static String REQUESTID = "requestId";
     public final static String ACCEPTORWANTSBOOKID = "acceptorWantsBookId";
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.sort_asc).setVisible(true);
+        menu.findItem(R.id.sort_desc).setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()){
+            case R.id.sort_asc:
+                Collections.sort(requestArrayList);
+                adapter.notifyDataSetChanged();
+                break;
+            case R.id.sort_desc:
+                Collections.sort(requestArrayList, Collections.<Request>reverseOrder());
+                adapter.notifyDataSetChanged();
+                break;
+        }
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

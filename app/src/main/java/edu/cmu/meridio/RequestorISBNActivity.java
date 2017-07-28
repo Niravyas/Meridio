@@ -40,7 +40,7 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
-public class RequestorISBNActivity extends AppCompatActivity {
+public class RequestorISBNActivity extends BaseActivity {
     private ConnectivityManager mConnectivityManager = null;
     ProgressDialog mProgress;
     TextView title;

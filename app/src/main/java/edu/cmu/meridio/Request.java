@@ -1,10 +1,14 @@
 package edu.cmu.meridio;
 
+import android.util.Log;
+
+import java.util.Comparator;
+
 /**
  * Created by yadav on 7/24/2017.
  */
 
-public class Request {
+public class Request implements Comparable<Request>{
     private String requestorWantsBook;
     private String acceptorWantsBookID;
     private int id;
@@ -84,5 +88,19 @@ public class Request {
 
     public void setFromUserEmail(String fromUserEmail) {
         this.fromUserEmail = fromUserEmail;
+    }
+
+    public int compareTo(Request r){
+        //This is a hack to sort requests
+        // since we don't set FromUserEmail while creating sent requests,
+        // the if condition will not be met and books will be sorted by title
+        if(this.fromUserEmail.length() > 0 && r.getFromUserEmail().length()> 0){
+            Log.v("fromUserEmail", "clause");
+            return this.fromUserEmail.compareToIgnoreCase(r.fromUserEmail);
+        }
+        else {
+            Log.v("requestorWantsBook", "clause");
+            return this.getRequestorWantsBook().compareToIgnoreCase(r.getRequestorWantsBook());
+        }
     }
 }

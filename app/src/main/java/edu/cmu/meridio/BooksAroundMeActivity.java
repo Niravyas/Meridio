@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,6 +31,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 
 public class BooksAroundMeActivity extends BaseActivity {
@@ -37,9 +40,34 @@ public class BooksAroundMeActivity extends BaseActivity {
     private ArrayList<String> stringArrayList;
     private ArrayList<String> isbnArrayList;
     private ArrayList<String> bookidArrayList;
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<Book> adapter;
+    private ArrayList<Book> bookArrayList;
     Location lastKnownLocation;
     User fbUser;
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.sort_asc).setVisible(true);
+        menu.findItem(R.id.sort_desc).setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()){
+            case R.id.sort_asc:
+                Collections.sort(bookArrayList);
+                adapter.notifyDataSetChanged();
+                break;
+            case R.id.sort_desc:
+                Collections.sort(bookArrayList, Collections.reverseOrder());
+                adapter.notifyDataSetChanged();
+                break;
+        }
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +194,7 @@ public class BooksAroundMeActivity extends BaseActivity {
         protected void onPostExecute(JSONObject responseJson) {
             if(responseJson!= null && responseJson.has("status") ) {
                 try {
+                    bookArrayList = new ArrayList<Book>();
 
                     stringArrayList = new ArrayList<String>();
                     isbnArrayList = new ArrayList<String>();
@@ -174,6 +203,15 @@ public class BooksAroundMeActivity extends BaseActivity {
                     for(int i = 0; i<reqArray.length(); i++){
 
                         JSONObject book = reqArray.getJSONObject(i);
+                        //create new book object
+                        Book b = new Book(Integer.parseInt(book.getString("id")),
+                                book.getString("user_id"),
+                                book.getString("isbn"),
+                                book.getString("title"),
+                                book.getString("genre"),
+                                book.getString("description"),
+                                book.getString("image_url"));
+                        bookArrayList.add(b);
                         stringArrayList.add(book.getString("title"));
                         isbnArrayList.add(book.getString("isbn"));
                         bookidArrayList.add(book.getString("id"));
@@ -181,7 +219,7 @@ public class BooksAroundMeActivity extends BaseActivity {
 
                     String a = " " + stringArrayList.size();
                     Log.i("size", a);
-                    adapter = new BookViewAdapter(BooksAroundMeActivity.this, R.layout.bookitem_listview, stringArrayList);
+                    adapter = new BooksAroundMeViewAdapter(BooksAroundMeActivity.this, R.layout.booksaroundmeitem_listview, bookArrayList);
 
                    listView.setAdapter(adapter);
                   /*  String result = responseJson.getString("status");
@@ -199,15 +237,13 @@ public class BooksAroundMeActivity extends BaseActivity {
                           // call books available with requestor w/ {"userId":getItem(position).getFromUsrId()
                         //Log.v("books avlblwReq", String.valueOf(adapter.getItem(position).getFromUserID()));
                           Intent i  = new Intent(BooksAroundMeActivity.this, SendTradeRequestActivity.class);
-                          Bundle extras = new Bundle();
-                          extras.putString("isbn", String.valueOf(isbnArrayList.get(position)));
-                          extras.putString("bookId", String.valueOf(bookidArrayList.get(position)));
-                         // extras.putString(REQUESTID, String.valueOf(adapter.getItem(position).getId()));
-                          Log.v("isbn put in extra", isbnArrayList.get(position));
-                         // Log.v("reqID put in extra", extras.getString(REQUESTID));
-                          i.putExtra("isbn", isbnArrayList.get(position));
-                          i.putExtra("bookId", bookidArrayList.get(position));
-                         // i.putExtra(REQUESTID, String.valueOf(adapter.getItem(position).getId()));
+
+                          i.putExtra("isbn", adapter.getItem(position).getIsbn());
+                          i.putExtra("bookId", String.valueOf(adapter.getItem(position).getId()));
+                          i.putExtra("title", String.valueOf(adapter.getItem(position).getTitle()));
+                          i.putExtra("genre", String.valueOf(adapter.getItem(position).getGenre()));
+                          i.putExtra("description", String.valueOf(adapter.getItem(position).getDescription()));
+                          i.putExtra("imageUrl", adapter.getItem(position).getImageUrl());
                           startActivity(i);
                       }
                   });

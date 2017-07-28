@@ -1,16 +1,36 @@
 package edu.cmu.meridio;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by yadav on 7/22/2017.
  */
 
-public class Book {
+public class Book implements Comparable<Book>{
     private int id;
+    private String userId;
     private String title;
     private String author;
     private String genre;
     private String description;
     private String isbn;
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public int getId() {
         return id;
@@ -69,5 +89,22 @@ public class Book {
         this.id = id;
         this.isbn = isbn;
         this.title = title;
+    }
+
+    public Book (int id, String userId, String isbn, String title, String genre, String description, String imageUrl){
+        this.id = id;
+        this.userId = userId;
+        this.title = title;
+        this.isbn = isbn;
+        this.genre = genre;
+        this.description= description;
+        this.imageUrl = imageUrl;
+    }
+
+    @Override
+    public int compareTo(@NonNull Book b) {
+        if (this.title.equals("") || b.title.equals(""))
+                return 0;
+        return this.title.compareToIgnoreCase(b.title);
     }
 }

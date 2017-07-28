@@ -11,6 +11,8 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,8 +32,9 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class RequestorBooksActivity extends AppCompatActivity {
+public class RequestorBooksActivity extends BaseActivity {
     private ConnectivityManager mConnectivityManager = null;
     ProgressDialog mProgress;
     private ListView listView;
@@ -43,6 +46,31 @@ public class RequestorBooksActivity extends AppCompatActivity {
     private String acceptorWantsBookId;
 
     public static final String ISBN = "isbn";
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.sort_asc).setVisible(true);
+        menu.findItem(R.id.sort_desc).setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()){
+            case R.id.sort_asc:
+                Collections.sort(bookArrayList);
+                adapter.notifyDataSetChanged();
+                break;
+            case R.id.sort_desc:
+                Collections.sort(bookArrayList, Collections.<Book>reverseOrder());
+                adapter.notifyDataSetChanged();
+                break;
+        }
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
