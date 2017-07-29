@@ -9,6 +9,7 @@
         android:id="@+id/book_image"
         android:layout_width="0dp"
         android:layout_height="75dp"
+        android:layout_gravity="center"
         android:layout_weight="25"
         android:contentDescription="@string/app_name" />
 

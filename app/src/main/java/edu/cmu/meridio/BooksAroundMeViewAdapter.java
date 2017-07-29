@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +76,8 @@ public class BooksAroundMeViewAdapter extends ArrayAdapter<Book> {
 
         TextDrawable drawable = TextDrawable.builder()
                 .buildRound(firstLetter, color); // radius in px
-        holder.imageView.setImageDrawable(drawable);
+        Picasso.with(getContext()).load(getItem(position).getImageUrl()).into(holder.imageView);
+//        holder.imageView.setImageDrawable(drawable);
 
         return convertView;
     }
