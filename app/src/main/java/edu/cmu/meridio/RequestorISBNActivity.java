@@ -58,8 +58,12 @@ public class RequestorISBNActivity extends BaseActivity {
     private static final String suffixMedium = "-M.jpg?default=false";
     private ImageView imageView;
     private boolean getFromCoversLibrary = false;
+
+    boolean approvedStatus = false;
+
     private String postApprovalContactDetails;
     private String postApproveDeclineMsg;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -504,7 +508,8 @@ public class RequestorISBNActivity extends BaseActivity {
             alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     //redirect to library
-                    Intent i = new Intent(getApplicationContext(), LibraryActivity.class);
+                    Intent i = new Intent(getApplicationContext(), PostActivity.class);
+                    i.putExtra("bookImageURL", imageURLString);
                     startActivity(i);
                 }
             });
@@ -560,7 +565,9 @@ public class RequestorISBNActivity extends BaseActivity {
             switch (this.status){
                 case "approved":
                     body = buildApproveRequestBody();
-                    new ProcessRequest(body).execute(); break;
+                    new ProcessRequest(body).execute();
+                    approvedStatus = true;
+                    break;
                 case "declined":
                     body = buildDeclineRequestBody();
                     new ProcessRequest(body).execute(); break;
