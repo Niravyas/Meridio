@@ -41,7 +41,7 @@ public class LibraryActivity extends BaseActivity {
     private ArrayList<Book> bookArrayList;
     private ArrayAdapter<Book> adapter;
     private String body;
-
+    User user = User.getInstance();
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
         super.onPrepareOptionsMenu(menu);
@@ -287,7 +287,14 @@ public class LibraryActivity extends BaseActivity {
                 bookArrayList = new ArrayList<Book>();
             for(int i = 0; i< listOfBooks.length(); i++){
                 JSONObject book = (JSONObject) listOfBooks.get(i);
-                Book b = new Book(Integer.parseInt(book.get("bookId").toString()), book.get("title").toString());
+                Book b = new Book(
+                        Integer.parseInt(book.get("bookId").toString()),
+                        user.getUserID(),
+                        book.getString("isbn"),
+                        book.get("title").toString(),
+                        book.getString("genre"),
+                        book.getString("description"),
+                        book.getString("imageUrl"));
                 bookArrayList.add(b);
             }
         } catch (JSONException e) {
@@ -296,7 +303,6 @@ public class LibraryActivity extends BaseActivity {
     }
 
     private String buildLibraryRequestBody(){
-        User user = User.getInstance();
         String body = "{"
                 + "\"userId\":" + user.getUserID()
                 + "}";

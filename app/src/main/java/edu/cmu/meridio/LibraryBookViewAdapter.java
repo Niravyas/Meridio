@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,6 +97,7 @@ public class LibraryBookViewAdapter extends ArrayAdapter<Book> {
                 .buildRound(firstLetter, color); // radius in px
 
         holder.imageView.setImageDrawable(drawable);
+        Picasso.with(getContext()).load(getItem(position).getImageUrl()).into(holder.imageView);
 
         holder.trash.setOnClickListener(new View.OnClickListener() {
             @Override

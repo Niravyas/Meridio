@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     String email;
     String sessionToken;
     AccessTokenTracker accessTokenTracker;
-    private boolean directUserToLogout;
+    private boolean directUserToLogout = false;
     private static final int LOGIN = 1;
 //    Context context = getBaseContext();
     SharedPreferences userIdPref;
@@ -79,6 +79,9 @@ public class LoginActivity extends AppCompatActivity {
             Log.v("found userId", "in sharedPref");
             fbUser = User.getInstance();
             fbUser.setUserID(userIdPref.getString(USERID, null));
+            Log.v("user singleton", "should" +
+                    "" +
+                    "/ be set to" + fbUser.getUserID());
             startActivityForResult(myIntent, LOGIN);
         }else {
             loginButton.registerCallback(callBackManager,
