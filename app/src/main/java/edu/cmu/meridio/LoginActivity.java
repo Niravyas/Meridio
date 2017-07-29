@@ -11,6 +11,8 @@ import android.util.JsonReader;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -48,9 +50,12 @@ public class LoginActivity extends AppCompatActivity {
     String name;
     String email;
     String sessionToken;
+    AccessTokenTracker accessTokenTracker;
+    private boolean directUserToLogout;
+    private static final int LOGIN = 1;
 //    Context context = getBaseContext();
     SharedPreferences userIdPref;
-    private static final String USERID = "userId";
+    public static final String USERID = "userId";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,14 +68,18 @@ public class LoginActivity extends AppCompatActivity {
                 "public_profile", "email", "user_birthday", "user_friends"));
         callBackManager = CallbackManager.Factory.create();
         final Intent myIntent = new Intent(LoginActivity.this, LandingActivity.class);
+        Intent receivedIntent = getIntent();
+        if(receivedIntent.hasExtra(BaseActivity.LOGOUTUSER)){
+            directUserToLogout = receivedIntent.getBooleanExtra(BaseActivity.LOGOUTUSER, false);
+        }
 
         userIdPref = this.getPreferences(Context.MODE_PRIVATE);
         Log.v("userIdPref.contains", String.valueOf(userIdPref.getAll()));
-        if (userIdPref.contains(USERID)){
+        if (userIdPref.contains(USERID) && !directUserToLogout){
             Log.v("found userId", "in sharedPref");
             fbUser = User.getInstance();
             fbUser.setUserID(userIdPref.getString(USERID, null));
-            startActivity(myIntent);
+            startActivityForResult(myIntent, LOGIN);
         }else {
             loginButton.registerCallback(callBackManager,
                 new FacebookCallback<LoginResult>() {
@@ -140,7 +149,25 @@ public class LoginActivity extends AppCompatActivity {
                 }
             );
         }
+
+        accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken,
+                                                       AccessToken currentAccessToken) {
+                if (currentAccessToken == null) {
+                    //clear user singleton
+                    if(fbUser != null)
+                        fbUser.clearUserID();
+
+                    //clear sharedPref
+                    SharedPreferences.Editor editor = userIdPref.edit();
+                    editor.remove(USERID);
+                    editor.apply();
+                }
+            }
+        };
     }
+
     private void setUser(LoginResult loginResult){
 
         if(name == null)
@@ -197,41 +224,6 @@ public class LoginActivity extends AppCompatActivity {
                     myConnection.disconnect();
 
                     return responseJson;
-//
-//
-//
-//
-//                    String a = ""+myConnection.getResponseCode();
-//                    Log.i("Success- Status Code", a);
-//                    Log.i("Success- StatusMessage", myConnection.getResponseMessage());
-//                    // Success
-//                    // Further processing here
-//                    InputStream responseBody = myConnection.getInputStream();
-//                    Log.v("responseBody", responseBody.toString());
-//                    InputStreamReader responseBodyReader =
-//                            new InputStreamReader(responseBody, "UTF-8");
-//
-//                    jsonReader = new JsonReader(responseBodyReader);
-//                    jsonReader.beginObject(); // Start processing the JSON object
-//                    while (jsonReader.hasNext()) { // Loop through all keys
-//                        String key = jsonReader.nextName();// Fetch the next key
-//                        Log.v("jsonReader Key", key);
-//                        if (key.equals("userId")) { // Check if desired key
-//                            // Fetch the value as a String
-//                            String APIreturnedUserId = jsonReader.nextString();
-//                            fbUser.setUserID(APIreturnedUserId);
-//                            Log.v("API returned userID", APIreturnedUserId);
-//
-//                            // Do something with the value
-//                            // ...
-//                            Log.i("value of userID", fbUser.getUserID());
-//
-//                            break; // Break out of the loop
-//                        } else {
-//                            jsonReader.skipValue(); // Skip values of other keys
-//                        }
-//                    }
-//                    jsonReader.close();
                 } else {
                     // Error handling code goes here
                     String a = ""+myConnection.getResponseCode();

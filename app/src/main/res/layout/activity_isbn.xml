@@ -62,7 +62,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Brief Description"
                             android:inputType="textMultiLine"
-                            android:text="Which is more dangerous, a gun or a swimming pool? What do schoolteachers and sumo wrestlers have in common? How much do parents really matter? These may not sound like typical questions for an economist to ask. But Steven D. Levitt is not a typical economist. He studies the riddles of everyday life—from cheating and crime to parenting and sports—and reaches conclusions that turn conventional wisdom on its head. Freakonomics is a groundbreaking collaboration between Levitt and Stephen J. Dubner, an award-winning author and journalist. They set out to explore the inner workings of a crack gang, the truth about real estate agents, the secrets of the Ku Klux Klan, and much more. Through forceful storytelling and wry insight, they show that economics is, at root, the study of incentives—how people get what they want or need, especially when other people want or need the same thing." />
+                            />
                     </android.support.design.widget.TextInputLayout>
                 </ScrollView>
             </LinearLayout>

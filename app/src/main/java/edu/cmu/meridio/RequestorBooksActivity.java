@@ -44,6 +44,7 @@ public class RequestorBooksActivity extends BaseActivity {
     private String userId;
     private String requestId;
     private String acceptorWantsBookId;
+    private String fromEmail;
 
     public static final String ISBN = "isbn";
 
@@ -79,6 +80,8 @@ public class RequestorBooksActivity extends BaseActivity {
         Intent i = getIntent();
         userId = i.getStringExtra(RequestsReceivedActivity.USERID);
         requestId = i.getStringExtra(RequestsReceivedActivity.REQUESTID);
+        fromEmail = i.getStringExtra(RequestsReceivedActivity.FROMEMAIL);
+
         if(userId != null)
             Log.v("userID 4m extra", userId);
         else
@@ -98,6 +101,7 @@ public class RequestorBooksActivity extends BaseActivity {
                 i.putExtra(ISBN, adapter.getItem(position).getIsbn());
                 i.putExtra(RequestsReceivedActivity.REQUESTID, requestId);
                 i.putExtra(RequestsReceivedActivity.ACCEPTORWANTSBOOKID, Integer.toString(adapter.getItem(position).getId()));
+                i.putExtra(RequestsReceivedActivity.FROMEMAIL, fromEmail);
                 startActivity(i);
             }
         });

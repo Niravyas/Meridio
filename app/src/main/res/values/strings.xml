@@ -37,6 +37,7 @@
     <string name="approve">Approve</string>
     <string name="decline">Decline</string>
     <string name="approve_decline_success">Request was successfully %1$s.</string>
+    <string name="post_approve_contact_details">Contact user at %1$s for further details.</string>
     <string name="request_success">Congratulations!\nYour request was successfully sent!\nClick OK to go back to landing page!</string>
     <string name="request_fail">Oops! Something went wrong and the request could not be sent! Retry in some time!</string>
     <string name="activity_books_around_me">Books Around Me </string>
@@ -45,8 +46,9 @@
     <string name="activity_library">My Library</string>
     <string name="activity_sent_requests">Sent Requests</string>
     <string name="activity_received_requests">Received Requests</string>
-    <string name="activity_manual_ISBN">Enter ISBN</string>
+    <string name="activity_manual_ISBN">Enter Book ISBN</string>
     <string name="activity_login">Meridio Login</string>
     <string name="activity_landing">Meridio</string>
     <string name="activity_requestor_books">Books With Requestor</string>
+    <string name="activity_barcode_capture">Scan Book ISBN</string>
 </resources>

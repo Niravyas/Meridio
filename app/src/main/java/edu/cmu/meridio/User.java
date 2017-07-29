@@ -24,4 +24,8 @@ public class User {
         User u = User.getInstance();
         return u.userID;
     }
+    public void clearUserID(){
+        User u = User.getInstance();
+        u = null;
+    }
 }

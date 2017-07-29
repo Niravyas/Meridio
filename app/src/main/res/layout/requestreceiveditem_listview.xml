@@ -12,14 +12,29 @@
         android:layout_weight="23"
         android:contentDescription="@string/app_name" />
 
-    <TextView
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:id="@+id/book_title"
-        android:layout_width="0dp"
+    <LinearLayout
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_width="0dp"
         android:layout_weight="67"
-        android:gravity="left"
-        android:textStyle=""
-        android:textSize="20dp"/>
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <TextView
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:id="@+id/book_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="left"
+            android:text="Requestor email"
+            android:textSize="20dp"/>
+        <TextView
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:id="@+id/book_wanted"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="left"
+            android:text="Book title goes here too long what's going to happen"/>
+    </LinearLayout>
+
 </LinearLayout>
