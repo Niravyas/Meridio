@@ -46,8 +46,9 @@
     <string name="activity_library">My Library</string>
     <string name="activity_sent_requests">Sent Requests</string>
     <string name="activity_received_requests">Received Requests</string>
-    <string name="activity_manual_ISBN">Enter ISBN</string>
+    <string name="activity_manual_ISBN">Enter Book ISBN</string>
     <string name="activity_login">Meridio Login</string>
     <string name="activity_landing">Meridio</string>
     <string name="activity_requestor_books">Books With Requestor</string>
+    <string name="activity_barcode_capture">Scan Book ISBN</string>
 </resources>

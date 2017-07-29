@@ -72,17 +72,18 @@ public class RequestsReceivedViewAdapter extends ArrayAdapter {
                 .buildRound(firstLetter, color); // radius in px
 
         holder.imageView.setImageDrawable(drawable);
-
+        holder.requestorWantsBook.setText(getItem(position).getRequestorWantsBook());
         return convertView;
     }
 
     private class ViewHolder {
         private ImageView imageView;
         private TextView requestorEmail;
-
+        private TextView requestorWantsBook;
         public ViewHolder(View v) {
             imageView = (ImageView) v.findViewById(R.id.book_image);
             requestorEmail = (TextView) v.findViewById(R.id.book_title);
+            requestorWantsBook = (TextView)v.findViewById(R.id.book_wanted);
         }
     }
 }

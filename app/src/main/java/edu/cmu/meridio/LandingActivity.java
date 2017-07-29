@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class LandingActivity extends BaseActivity {
-    private Boolean exit = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,25 +35,5 @@ public class LandingActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (exit) {
-            finish();
-            System.exit(1);
-        } else {
-            Toast.makeText(this, "Press Back again to Exit.",
-                    Toast.LENGTH_SHORT).show();
-            exit = true;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    exit = false;
-                }
-            }, 3 * 1000);
-
-        }
-
     }
 }
