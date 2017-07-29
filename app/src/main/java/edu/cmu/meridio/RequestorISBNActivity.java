@@ -52,11 +52,14 @@ public class RequestorISBNActivity extends BaseActivity {
     private String imageURLString;
     private String requestId;
     private String acceptorWantsBookId;
+    private String fromEmail;
     private static final String coverLibraryURL = "http://covers.openlibrary.org/b/isbn/";
     private static final String suffixLarge = "-L.jpg?default=false";
     private static final String suffixMedium = "-M.jpg?default=false";
     private ImageView imageView;
     private boolean getFromCoversLibrary = false;
+    private String postApprovalContactDetails;
+    private String postApproveDeclineMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +75,9 @@ public class RequestorISBNActivity extends BaseActivity {
         }
         if(data.hasExtra(RequestsReceivedActivity.ACCEPTORWANTSBOOKID)){
             acceptorWantsBookId = data.getStringExtra(RequestsReceivedActivity.ACCEPTORWANTSBOOKID);
+        }
+        if(data.hasExtra(RequestsReceivedActivity.FROMEMAIL)){
+            fromEmail = data.getStringExtra(RequestsReceivedActivity.FROMEMAIL);
         }
 
         imageView = (ImageView) findViewById(R.id.image);
@@ -120,8 +126,8 @@ public class RequestorISBNActivity extends BaseActivity {
             }
 
             String apiUrlString = "https://www.googleapis.com/books/v1/volumes?q=isbn:"
-//            + this.isbn;
-            + "9780141439600";
+            + this.isbn;
+//            + "9780141439600";
             try{
                 HttpURLConnection connection = null;
                 // Build Connection.
@@ -470,8 +476,11 @@ public class RequestorISBNActivity extends BaseActivity {
                     try {
                         String result = responseJson.getString("status");
                         if (result.equals("success")){
-                            if(this.body.contains("approved"))
-                                showProcessSuccessfulDialog(String.format(getString(R.string.approve_decline_success), "approved"));
+                            if(this.body.contains("approved")) {
+                                postApproveDeclineMsg = String.format(getString(R.string.approve_decline_success), "approved");
+                                postApprovalContactDetails = String.format(getString(R.string.post_approve_contact_details), fromEmail);
+                                showProcessSuccessfulDialog(postApproveDeclineMsg + " " + postApprovalContactDetails);
+                            }
                             if(this.body.contains("declined"))
                                 showProcessSuccessfulDialog(String.format(getString(R.string.approve_decline_success), "declined"));
                         }

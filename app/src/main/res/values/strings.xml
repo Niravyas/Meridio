@@ -37,6 +37,7 @@
     <string name="approve">Approve</string>
     <string name="decline">Decline</string>
     <string name="approve_decline_success">Request was successfully %1$s.</string>
+    <string name="post_approve_contact_details">Contact user at %1$s for further details.</string>
     <string name="request_success">Congratulations!\nYour request was successfully sent!\nClick OK to go back to landing page!</string>
     <string name="request_fail">Oops! Something went wrong and the request could not be sent! Retry in some time!</string>
     <string name="activity_books_around_me">Books Around Me </string>

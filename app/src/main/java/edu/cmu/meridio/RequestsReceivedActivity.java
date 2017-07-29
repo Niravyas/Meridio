@@ -45,6 +45,7 @@ public class RequestsReceivedActivity extends BaseActivity {
     public final static String USERID = "userId";
     public final static String REQUESTID = "requestId";
     public final static String ACCEPTORWANTSBOOKID = "acceptorWantsBookId";
+    public final static String FROMEMAIL = "fromEmail";
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
@@ -95,6 +96,7 @@ public class RequestsReceivedActivity extends BaseActivity {
                 Log.v("reqID put in extra", extras.getString(REQUESTID));
                 i.putExtra(USERID,String.valueOf(adapter.getItem(position).getFromUserID()) );
                 i.putExtra(REQUESTID, String.valueOf(adapter.getItem(position).getId()));
+                i.putExtra(FROMEMAIL, String.valueOf(adapter.getItem(position).getFromUserEmail()));
                 startActivity(i);
             }
         });
