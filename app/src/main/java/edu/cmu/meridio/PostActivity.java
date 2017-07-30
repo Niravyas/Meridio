@@ -39,7 +39,7 @@ public class PostActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         TextView postText = (TextView) findViewById(R.id.CustomisedMessage);
-        postText.setText("Nurture your love for reading at no cost! Share your books using the Meridio App! I just did ;)");
+        postText.setText(getString(R.string.post_to_fb_msg));
         imageView = (ImageView) findViewById(R.id.imgBook) ;
         button = (Button) findViewById(R.id.Post_Button);
         cancelButton = (Button) findViewById(R.id.CancelPost);
@@ -67,7 +67,7 @@ public class PostActivity extends BaseActivity {
 
                 if (ShareDialog.canShow(ShareLinkContent.class)) {
                     ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                            .setContentUrl(Uri.parse(imageURL)).setQuote("Nurture your love for reading at no cost! Share your books using the Meridio App! I just did ;)")
+                            .setContentUrl(Uri.parse(imageURL)).setQuote(getString(R.string.post_to_fb_msg))
                             .build();
                     shareDialog.show(linkContent);
                 }
