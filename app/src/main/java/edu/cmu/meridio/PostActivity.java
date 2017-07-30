@@ -45,6 +45,9 @@ public class PostActivity extends BaseActivity {
         cancelButton = (Button) findViewById(R.id.CancelPost);
         Intent intent = getIntent();
         imageURL = intent.getStringExtra("bookImageURL");
+        Log.v("imageURL from intent", imageURL);
+
+
         Picasso.with(getApplicationContext()).load(imageURL).into(imageView);
         BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
         imageToPost = drawable.getBitmap();
@@ -60,32 +63,12 @@ public class PostActivity extends BaseActivity {
                 callbackManager = CallbackManager.Factory.create();
                 shareDialog = new ShareDialog(PostActivity.this);
 
-
-
-              //  new getBMfromURL().execute();
-
                 Log.i("Tag", "iamhere");
-                // Bitmap imageToPost = getBitmapFromURL(url);
-               /* if (ShareDialog.canShow(SharePhotoContent.class)) {
-                    SharePhoto photo = new SharePhoto.Builder()
-                            .setBitmap(imageToPost)
-                            .build();
-                    SharePhotoContent content = new SharePhotoContent.Builder()
-                            .addPhoto(photo)
-                            .build();
-
-                    shareDialog.show(PostActivity.this, content);
-                }*/
 
                 if (ShareDialog.canShow(ShareLinkContent.class)) {
                     ShareLinkContent linkContent = new ShareLinkContent.Builder()
                             .setContentUrl(Uri.parse(imageURL)).setQuote("Nurture your love for reading at no cost! Share your books using the Meridio App! I just did ;)")
                             .build();
-
-
-
-                    //ShareLinkContent linkContent = new ShareLinkContent.Builder().setContentUrl(Uri.parse("http://google.com")).setQuote("Hello people").build();
-
                     shareDialog.show(linkContent);
                 }
 
@@ -102,58 +85,6 @@ public class PostActivity extends BaseActivity {
         });
     }
 
-   /*
-
-    public class getBMfromURL extends AsyncTask<String, String, String> {
-
-        private Exception exception;
-
-        protected String doInBackground(String... params) {
-            try {
-                URL url = new URL(imageURL);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                imageToPost = BitmapFactory.decodeStream(input);
-
-            } catch (Exception e) {
-                this.exception = e;
-
-
-            }
-            return null;
-        }
-
-        protected void onPostExecute(String feed) {
-Log.i("Tag", "iamhere");
-           *//* if (ShareDialog.canShow(ShareLinkContent.class)) {
-                ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                        .setContentUrl(Uri.parse(imageURL)).setQuote("Nurture your love for reading at no cost! Share your books using the Meridio App! I just did ;)")
-                        .build();
-
-
-                //ShareLinkContent linkContent = new ShareLinkContent.Builder().setContentUrl(Uri.parse("http://google.com")).setQuote("Hello people").build();
-
-                shareDialog.show(linkContent);
-            }
-*//*
-
-          *//*  if (ShareDialog.canShow(ShareLinkContent.class)) {
-                SharePhoto photo = new SharePhoto.Builder()
-                        .setBitmap(imageToPost)
-                        .build();
-                SharePhotoContent content = new SharePhotoContent.Builder()
-                        .addPhoto(photo)
-                        .build();
-
-                shareDialog.show(content);
-            }
-        }*//*
-
-
-        }
-    }*/
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

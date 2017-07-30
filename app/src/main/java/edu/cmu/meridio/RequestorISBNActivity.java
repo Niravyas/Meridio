@@ -171,8 +171,6 @@ public class RequestorISBNActivity extends BaseActivity {
                 // Close connection and return response code.
                 connection.disconnect();
 
-                isCoverInCoversLibrary();
-
                 return responseJson;
             } catch (SocketTimeoutException e) {
                 Log.v(getClass().getName(), "Connection timed out. Returning null");
@@ -331,41 +329,13 @@ public class RequestorISBNActivity extends BaseActivity {
         }
     }
 
-    private void isCoverInCoversLibrary() throws IOException {
-
-        Log.v("coverlibraryURL", imageURLString);
-        HttpURLConnection connection = null;
-        try {
-            // Build Connection.
-            URL url = new URL(imageURLString);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setReadTimeout(10000); // 10 seconds
-            connection.setConnectTimeout(10000); // 10 seconds
-        } catch (MalformedURLException e) {
-            // Impossible: The only two URLs used in the app are taken from string resources.
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            // Impossible: "GET" is a perfectly valid request method.
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        int responseCode = connection.getResponseCode();
-        if(responseCode == 404){
-            Log.v(getClass().getName(), "Failed to get book covers from covers library: " + responseCode);
-            connection.disconnect();
-        }
-        if(responseCode == 200)
-            getFromCoversLibrary = true;
-    }
-
     private void fetchFromGoogleBookThumbnails(JSONObject jsonObject) throws JSONException {
         JSONArray books = jsonObject.getJSONArray("items");
         JSONObject firstBook = (JSONObject) books.get(0);
         JSONObject firstBookVolumeInfo = firstBook.getJSONObject("volumeInfo");
         JSONObject imageLinksJSON = firstBookVolumeInfo.getJSONObject("imageLinks");
         String thumbnailURL = imageLinksJSON.getString("thumbnail");
+        imageURLString = thumbnailURL;
         Picasso.with(getApplicationContext()).load(thumbnailURL).into(imageView);
     }
 
