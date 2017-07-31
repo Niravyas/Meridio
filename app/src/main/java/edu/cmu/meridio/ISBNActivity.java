@@ -116,6 +116,9 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
             try {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         LOCATION_INTERVAL, LOCATION_DISTANCE, ISBNActivity.this);
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        LOCATION_INTERVAL, LOCATION_DISTANCE, ISBNActivity.this);
+
             } catch (java.lang.SecurityException ex) {
                 Log.v("requestLocation", "fail to request location update, ignore", ex);
             } catch (IllegalArgumentException ex) {
@@ -127,6 +130,7 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
 
         if(lastKnownLocation == null){
             Log.v("lastknownlocation", "is still null");
+            setCMULocation();
         } else
             Log.v("lsatknownLocation", lastKnownLocation.toString());
 
@@ -610,6 +614,12 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
                         RC_HANDLE_LOC_PERM);
             }
         };
+    }
+
+    public void setCMULocation(){
+        lastKnownLocation = new Location("");
+        lastKnownLocation.setLongitude(new Double(-79.947100));
+        lastKnownLocation.setLatitude(new Double(40.441688));
     }
 
 }

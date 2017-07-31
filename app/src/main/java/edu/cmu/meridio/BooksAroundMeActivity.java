@@ -110,6 +110,12 @@ public class BooksAroundMeActivity extends BaseActivity implements LocationListe
                 Log.v("other exception caught", e.getMessage());
             }
         }
+
+        if(lastKnownLocation == null){
+            Log.v("lastknownlocation", "is still null");
+            setCMULocation();
+        } else
+            Log.v("lsatknownLocation", lastKnownLocation.toString());
             getData();
            // setData();
 
@@ -283,5 +289,11 @@ public class BooksAroundMeActivity extends BaseActivity implements LocationListe
             if(mLocationManager != null)
                 mLocationManager.removeUpdates(BooksAroundMeActivity.this);
         }
+    }
+
+    public void setCMULocation(){
+        lastKnownLocation = new Location("");
+        lastKnownLocation.setLongitude(new Double(-79.947100));
+        lastKnownLocation.setLatitude(new Double(40.441688));
     }
 }
