@@ -69,8 +69,8 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
     private final static int RC_HANDLE_LOC_PERM = 2;
     private Location lastKnownLocation;
     private LocationManager mLocationManager;
-    private static final int LOCATION_INTERVAL = 0;
-    private static final float LOCATION_DISTANCE = 0f;
+    public static final int LOCATION_INTERVAL = 0;
+    public static final float LOCATION_DISTANCE = 0f;
     private Location mLastLocation;
 
     @Override
@@ -360,20 +360,24 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
             setTitle(firstBookVolumeInfo.getString("title"));
             Log.v("firstBookVolumeInfo", firstBookVolumeInfo.toString());
 
+            try{
             //Set Genre
-            if(!firstBookVolumeInfo.has("categories")){
-                throw new JSONException(String.format(getString(R.string.json_missing_key), "categories"));
-            }
-            JSONArray jsonCategories = firstBookVolumeInfo.getJSONArray("categories");
-            StringBuilder sb = new StringBuilder();
-            for(int i = 0; i< jsonCategories.length(); i++){
-                sb.append(jsonCategories.get(i).toString());
-                if( i != jsonCategories.length() - 1){
-                    sb.append(", ");
+                if(!firstBookVolumeInfo.has("categories")){
+                    throw new JSONException(String.format(getString(R.string.json_missing_key), "categories"));
                 }
-            }
-            this.genre.setText(sb.toString(), TextView.BufferType.EDITABLE);
 
+                JSONArray jsonCategories = firstBookVolumeInfo.getJSONArray("categories");
+                StringBuilder sb = new StringBuilder();
+                for(int i = 0; i< jsonCategories.length(); i++){
+                    sb.append(jsonCategories.get(i).toString());
+                    if( i != jsonCategories.length() - 1){
+                        sb.append(", ");
+                    }
+                }
+                this.genre.setText(sb.toString(), TextView.BufferType.EDITABLE);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
             //set description
             if(firstBookVolumeInfo.has("description")) {
                 String description = firstBookVolumeInfo.getString("description");
@@ -512,7 +516,7 @@ public class ISBNActivity extends BaseActivity implements LocationListener{
                 // Request was cancelled due to no network connection.
                 showNetworkDialog();
             } else if(responseJson == null){
-                showSimpleDialog(getResources().getString(R.string.dialog_null_response));
+                showSimpleDialog(getResources().getString(R.string.post_fail));
             }
             else{
                 mProgress.hide();

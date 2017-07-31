@@ -401,7 +401,7 @@ public class RequestorISBNActivity extends BaseActivity {
                 if (responseCode != 200) {
                     Log.v(getClass().getName(), "posting API request failed. Response Code: " + responseCode);
                     connection.disconnect();
-                    showProcessFailDailog(getString(R.string.post_fail));
+                    showProcessFailDailog(getString(R.string.received_request_process_fail));
                     return null;
                 }
 
@@ -442,7 +442,7 @@ public class RequestorISBNActivity extends BaseActivity {
                 // Request was cancelled due to no network connection.
                 showNetworkDialog();
             } else if(responseJson == null){
-                showSimpleDialog(getResources().getString(R.string.dialog_null_response));
+                showSimpleDialog(getResources().getString(R.string.received_request_process_fail));
             }
             else{
                 mProgress.hide();

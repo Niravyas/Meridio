@@ -52,4 +52,5 @@
     <string name="activity_requestor_books">Books With Requestor</string>
     <string name="activity_barcode_capture">Scan Book ISBN</string>
     <string name="post_to_fb_msg">Nurture your love for reading at no cost! Share your books using the Meridio App! I just did! :)</string>
+    <string name="received_request_process_fail">Something went wrong and your request could not be posted. Please try in some time!</string>
 </resources>

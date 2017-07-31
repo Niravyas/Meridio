@@ -45,8 +45,10 @@ public class LibraryActivity extends BaseActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.sort_asc).setVisible(true);
-        menu.findItem(R.id.sort_desc).setVisible(true);
+        if(bookArrayList != null && bookArrayList.size() > 0) {
+            menu.findItem(R.id.sort_asc).setVisible(true);
+            menu.findItem(R.id.sort_desc).setVisible(true);
+        }
         return true;
     }
 
@@ -77,16 +79,6 @@ public class LibraryActivity extends BaseActivity {
         //fetch books here, using asynctask
         new fetchLibrary(body).execute();
 
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                adapter.remove(adapter.getItem(position));
-//                adapter.notifyDataSetChanged();
-//
-//                //send backend delete request, using asyncTask
-//                new deleteBook(Integer.toString(adapter.getItem(position).getId())).execute();
-//            }
-//        });
     }
 
     private class fetchLibrary extends AsyncTask<Void, Void, JSONObject>{

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.facebook.login.LoginResult;
 
@@ -34,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 
-public class BooksAroundMeActivity extends BaseActivity {
+public class BooksAroundMeActivity extends BaseActivity implements LocationListener {
 
     private ListView listView;
     private ArrayList<String> stringArrayList;
@@ -43,13 +45,16 @@ public class BooksAroundMeActivity extends BaseActivity {
     private ArrayAdapter<Book> adapter;
     private ArrayList<Book> bookArrayList;
     Location lastKnownLocation;
+    private LocationManager mLocationManager;
     User fbUser;
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.sort_asc).setVisible(true);
-        menu.findItem(R.id.sort_desc).setVisible(true);
+        if(bookArrayList != null && bookArrayList.size() > 0) {
+            menu.findItem(R.id.sort_asc).setVisible(true);
+            menu.findItem(R.id.sort_desc).setVisible(true);
+        }
         return true;
     }
 
@@ -88,7 +93,23 @@ public class BooksAroundMeActivity extends BaseActivity {
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     1);
         }
-            lastKnownLocation = locationManager.getLastKnownLocation(gpsProvider);
+        lastKnownLocation = locationManager.getLastKnownLocation(gpsProvider);
+
+        if(lastKnownLocation == null){
+            Log.v("battery draining", "code in action");
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+            lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            try {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        ISBNActivity.LOCATION_INTERVAL, ISBNActivity.LOCATION_DISTANCE, BooksAroundMeActivity.this);
+            } catch (java.lang.SecurityException ex) {
+                Log.v("requestLocation", "fail to request location update, ignore", ex);
+            } catch (IllegalArgumentException ex) {
+                Log.v("requestLocation", "gps provider does not exist " + ex.getMessage());
+            } catch (Exception e){
+                Log.v("other exception caught", e.getMessage());
+            }
+        }
             getData();
            // setData();
 
@@ -97,26 +118,32 @@ public class BooksAroundMeActivity extends BaseActivity {
 
     }
 
-    private void setData() {
-        stringArrayList = new ArrayList<>();
-        stringArrayList.add("Harry Potter and Sorcerer's Stone");
-        stringArrayList.add("Harry Potter and Chamber of Secrets");
-        stringArrayList.add("Game of Thrones");
-        stringArrayList.add("Feast for Crows");
-        stringArrayList.add("A Suitable Boy");
-        stringArrayList.add("Satanic Verses");
-        stringArrayList.add("Winds of Winter");
-        stringArrayList.add("Foutainhead");
-        stringArrayList.add("A Brief History of Time");
-        stringArrayList.add("And the Mountains Echoed");
-        stringArrayList.add("Kafka on the Shore");
-        stringArrayList.add("American Psycho");
-    }
-
     private void getData(){
 
         Log.i("Tag", "Then herer");
         new getBookData().execute();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        lastKnownLocation.set(location);
+        Log.v("onlocationChanged", "true");
+        Log.v("new location", location.toString());
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Toast.makeText(BooksAroundMeActivity.this, "Please enable location service", Toast.LENGTH_SHORT).show();
     }
 
     private class getBookData extends AsyncTask<String, String, JSONObject> {
@@ -252,7 +279,9 @@ public class BooksAroundMeActivity extends BaseActivity {
                     e.printStackTrace();
                 }
             }
-
+            //stop requesting location updates
+            if(mLocationManager != null)
+                mLocationManager.removeUpdates(BooksAroundMeActivity.this);
         }
     }
 }

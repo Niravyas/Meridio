@@ -50,8 +50,10 @@ public class RequestsReceivedActivity extends BaseActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.sort_asc).setVisible(true);
-        menu.findItem(R.id.sort_desc).setVisible(true);
+        if(requestArrayList != null && requestArrayList.size() > 0) {
+            menu.findItem(R.id.sort_asc).setVisible(true);
+            menu.findItem(R.id.sort_desc).setVisible(true);
+        }
         return true;
     }
 
