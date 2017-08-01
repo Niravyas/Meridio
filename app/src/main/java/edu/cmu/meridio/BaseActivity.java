@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.facebook.login.LoginManager;
+
 /**
  * Created by yadav on 7/22/2017.
  */
@@ -36,6 +38,7 @@ public class BaseActivity extends AppCompatActivity {
                 i = new Intent(getApplicationContext(), RequestsReceivedActivity.class);
                 startActivity(i); break;
             case R.id.action_logout:
+                LoginManager.getInstance().logOut();
                 i = new Intent(getApplicationContext(), LoginActivity.class);
                 i.putExtra(LOGOUTUSER, true);
                 startActivity(i); break;

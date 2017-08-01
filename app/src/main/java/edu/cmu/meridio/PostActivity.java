@@ -44,7 +44,7 @@ public class PostActivity extends BaseActivity {
         button = (Button) findViewById(R.id.Post_Button);
         cancelButton = (Button) findViewById(R.id.CancelPost);
         Intent intent = getIntent();
-        imageURL = intent.getStringExtra("bookImageURL");
+        imageURL = (intent.getStringExtra("bookImageURL") == null)? "":intent.getStringExtra("bookImageURL");
         Log.v("imageURL from intent", imageURL);
 
 

@@ -12,12 +12,20 @@
     android:orientation="vertical"
     android:gravity="center"
     >
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:src="@drawable/logintext" />
     <TextView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="Hello World"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="A book Share App"
         android:id="@+id/text_view"
-        android:visibility="invisible"/>
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
